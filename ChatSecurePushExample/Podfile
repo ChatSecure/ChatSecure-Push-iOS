@@ -1,0 +1,13 @@
+# Uncomment this line to define a global platform for your project
+# platform :ios, '6.0'
+
+use_frameworks!
+
+# target 'ChatSecurePushExample' do
+#
+# end
+
+target 'ChatSecurePushExampleTests' do
+  platform :ios, '8.0'
+  pod 'ChatSecure-Push-iOS', :path => '../ChatSecure-Push-iOS.podspec'
+end

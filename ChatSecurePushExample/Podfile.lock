@@ -1,0 +1,14 @@
+PODS:
+  - ChatSecure-Push-iOS (0.0.1)
+
+DEPENDENCIES:
+  - ChatSecure-Push-iOS (from `../ChatSecure-Push-iOS.podspec`)
+
+EXTERNAL SOURCES:
+  ChatSecure-Push-iOS:
+    :path: "../ChatSecure-Push-iOS.podspec"
+
+SPEC CHECKSUMS:
+  ChatSecure-Push-iOS: d2f3d87d0a4876648636628b2af270aa2479fca5
+
+COCOAPODS: 0.37.2
