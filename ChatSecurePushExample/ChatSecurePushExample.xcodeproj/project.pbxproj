@@ -13,6 +13,7 @@
 		638C25371B4C43D600AB62CB /* Images.xcassets in Resources */ = {isa = PBXBuildFile; fileRef = 638C25361B4C43D600AB62CB /* Images.xcassets */; };
 		638C253A1B4C43D600AB62CB /* LaunchScreen.xib in Resources */ = {isa = PBXBuildFile; fileRef = 638C25381B4C43D600AB62CB /* LaunchScreen.xib */; };
 		638C25461B4C43D600AB62CB /* ChatSecurePushExampleTests.swift in Sources */ = {isa = PBXBuildFile; fileRef = 638C25451B4C43D600AB62CB /* ChatSecurePushExampleTests.swift */; };
+		638C255C1B4C7BB300AB62CB /* URLMockSetup.swift in Sources */ = {isa = PBXBuildFile; fileRef = 638C255B1B4C7BB300AB62CB /* URLMockSetup.swift */; };
 		B44692DF3ADCB0AD0AEE220A /* Pods_ChatSecurePushExampleTests.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = B0A70582EEF616C97837BB4F /* Pods_ChatSecurePushExampleTests.framework */; settings = {ATTRIBUTES = (Weak, ); }; };
 /* End PBXBuildFile section */
 
@@ -38,6 +39,8 @@
 		638C253F1B4C43D600AB62CB /* ChatSecurePushExampleTests.xctest */ = {isa = PBXFileReference; explicitFileType = wrapper.cfbundle; includeInIndex = 0; path = ChatSecurePushExampleTests.xctest; sourceTree = BUILT_PRODUCTS_DIR; };
 		638C25441B4C43D600AB62CB /* Info.plist */ = {isa = PBXFileReference; lastKnownFileType = text.plist.xml; path = Info.plist; sourceTree = "<group>"; };
 		638C25451B4C43D600AB62CB /* ChatSecurePushExampleTests.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ChatSecurePushExampleTests.swift; sourceTree = "<group>"; };
+		638C255A1B4C771000AB62CB /* ChatSecurePushExampleTests-header.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = "ChatSecurePushExampleTests-header.h"; sourceTree = "<group>"; };
+		638C255B1B4C7BB300AB62CB /* URLMockSetup.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = URLMockSetup.swift; sourceTree = "<group>"; };
 		857FDD41676BA111B20EC5CE /* Pods-ChatSecurePushExampleTests.release.xcconfig */ = {isa = PBXFileReference; includeInIndex = 1; lastKnownFileType = text.xcconfig; name = "Pods-ChatSecurePushExampleTests.release.xcconfig"; path = "Pods/Target Support Files/Pods-ChatSecurePushExampleTests/Pods-ChatSecurePushExampleTests.release.xcconfig"; sourceTree = "<group>"; };
 		B0A70582EEF616C97837BB4F /* Pods_ChatSecurePushExampleTests.framework */ = {isa = PBXFileReference; explicitFileType = wrapper.framework; includeInIndex = 0; path = Pods_ChatSecurePushExampleTests.framework; sourceTree = BUILT_PRODUCTS_DIR; };
 /* End PBXFileReference section */
@@ -123,7 +126,9 @@
 			isa = PBXGroup;
 			children = (
 				638C25451B4C43D600AB62CB /* ChatSecurePushExampleTests.swift */,
+				638C255B1B4C7BB300AB62CB /* URLMockSetup.swift */,
 				638C25431B4C43D600AB62CB /* Supporting Files */,
+				638C255A1B4C771000AB62CB /* ChatSecurePushExampleTests-header.h */,
 			);
 			path = ChatSecurePushExampleTests;
 			sourceTree = "<group>";
@@ -297,6 +302,7 @@
 			buildActionMask = 2147483647;
 			files = (
 				638C25461B4C43D600AB62CB /* ChatSecurePushExampleTests.swift in Sources */,
+				638C255C1B4C7BB300AB62CB /* URLMockSetup.swift in Sources */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
@@ -449,6 +455,7 @@
 				INFOPLIST_FILE = ChatSecurePushExampleTests/Info.plist;
 				LD_RUNPATH_SEARCH_PATHS = "$(inherited) @executable_path/Frameworks @loader_path/Frameworks";
 				PRODUCT_NAME = "$(TARGET_NAME)";
+				SWIFT_OBJC_BRIDGING_HEADER = "ChatSecurePushExampleTests/ChatSecurePushExampleTests-header.h";
 				TEST_HOST = "$(BUILT_PRODUCTS_DIR)/ChatSecurePushExample.app/ChatSecurePushExample";
 			};
 			name = Debug;
@@ -465,6 +472,7 @@
 				INFOPLIST_FILE = ChatSecurePushExampleTests/Info.plist;
 				LD_RUNPATH_SEARCH_PATHS = "$(inherited) @executable_path/Frameworks @loader_path/Frameworks";
 				PRODUCT_NAME = "$(TARGET_NAME)";
+				SWIFT_OBJC_BRIDGING_HEADER = "ChatSecurePushExampleTests/ChatSecurePushExampleTests-header.h";
 				TEST_HOST = "$(BUILT_PRODUCTS_DIR)/ChatSecurePushExample.app/ChatSecurePushExample";
 			};
 			name = Release;

@@ -8,12 +8,15 @@
 
 import UIKit
 import XCTest
+import URLMock
+import ChatSecure_Push_iOS
 
 class ChatSecurePushExampleTests: XCTestCase {
     
     override func setUp() {
         super.setUp()
-        // Put setup code here. This method is called before the invocation of each test method in the class.
+        UMKMockURLProtocol.enable()
+        setupURLMock()
     }
     
     override func tearDown() {
@@ -21,15 +24,31 @@ class ChatSecurePushExampleTests: XCTestCase {
         super.tearDown()
     }
     
-    func testExample() {
-        // This is an example of a functional test case.
-        XCTAssert(true, "Pass")
+    func defaultClient() -> Client {
+        var configuration = NSURLSessionConfiguration.defaultSessionConfiguration()
+        configuration.protocolClasses = [UMKMockURLProtocol.self]
+        var client = Client(baseUrl: baseURl, urlSessionConfiguration: configuration)
+        return client
     }
     
-    func testPerformanceExample() {
-        // This is an example of a performance test case.
-        self.measureBlock() {
-            // Put the code you want to measure the time of here.
+    func testCreatingClient() {
+        var client = self.defaultClient()
+        var hasLength = count(client.baseUrl.absoluteString!) > 0
+        XCTAssertTrue(hasLength, "No base url")
+    }
+    
+    func testCreatingAccount() {
+        var client = self.defaultClient()
+        
+        client.registerNewUser(username, password: password, email: email) { (account, error) -> Void in
+            var correctUsername = account?.username == username
+            var correctEmail = account?.email == email
+            var correctToken = account?.token == token
+            
+            XCTAssertNil(error, "Error creating account \(error)")
+            XCTAssertTrue(correctUsername, "Incorrect username \(account?.username)")
+            XCTAssertTrue(correctEmail, "Incorrect email \(account?.email)")
+            XCTAssertTrue(correctToken, "Incorrect token \(account?.token)")
         }
     }
     
