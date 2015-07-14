@@ -8,19 +8,23 @@
 
 import Foundation
 
-public enum DeviceType {
+public enum DeviceKind {
     case unkown
     case iOS
     case Android
 }
 
 public class Device: NSObject {
-    public var name: String
+    public var name: String?
     public var registrationID: String
-    public let deviceType = DeviceType.unkown
+    public var active = true
+    public let dateCreated: NSDate
+    public let deviceKind = DeviceKind.unkown
     
-    init (name: String, registrationID: String, deviceID: String) {
+    
+    public init (registrationID: String,dateCreated: NSDate, name: String?, deviceID: String?) {
         self.name = name
+        self.dateCreated = dateCreated
         self.registrationID = registrationID
     }
 }
