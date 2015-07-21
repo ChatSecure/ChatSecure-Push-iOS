@@ -11,6 +11,7 @@ import Foundation
 public class Token: NSObject {
     public let tokenString: String
     public let registrationID: String
+    public var name: String?
     
     init (tokenString: String, deviceID: String) {
         self.tokenString = tokenString

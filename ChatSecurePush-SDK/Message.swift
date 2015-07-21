@@ -10,11 +10,13 @@ import Foundation
 
 
 public class Message: NSObject {
-    public var token: Token
-    public var payload: String?
+    public var token: String
     
-    init (token: Token, payload: String?) {
+    /**Data needs to be a dictionary that can be serialized as JSON */
+    public var data: [String:AnyObject]?
+    
+    public init(token: String, data: [String:AnyObject]?){
         self.token = token
-        self.payload = payload
+        self.data = data
     }
 }

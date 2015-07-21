@@ -95,4 +95,56 @@ class ChatSecurePushExampleTests: XCTestCase {
         })
     }
     
+    func testCreatingToken() {
+        var client = self.defaultClient(authToken)
+        
+        var expectation = self.expectationWithDescription("Creating Token")
+        
+        client.createToken(apnsToken, name: tokenName) { (token, error) -> Void in
+            var correctDeviceName = token?.name == tokenName
+            var correctApnsToken = token?.registrationID == apnsToken
+            var correctToken = token?.tokenString == whitelistToken
+            
+            XCTAssertNil(error, "Erro creating token: \(error)")
+            XCTAssertTrue(correctDeviceName, "Incorrect device name \(token?.name)")
+            XCTAssertTrue(correctApnsToken, "Incorrect APNS token \(token?.registrationID)")
+            XCTAssertTrue(correctToken, "Incorrect token \(token?.tokenString)")
+            
+            expectation.fulfill()
+        }
+        
+        self.waitForExpectationsWithTimeout(10, handler: { (error) -> Void in
+            if( error != nil) {
+                println(error)
+            }
+        })
+    }
+    
+    func testSendingMessage() {
+        var client = self.defaultClient(authToken)
+        
+        var expectation = self.expectationWithDescription("Sending Message")
+        let dict = [
+            "key":["key":"value"],
+            "Help":"Me"
+        ]
+        
+        var originalMessage = Message(token:"23", data:dict as? [String : AnyObject])
+        
+        client.sendMessage(originalMessage) { (newMessage, error) -> Void in
+            
+            var equalToken = originalMessage.token == newMessage?.token
+            
+            XCTAssertNil(error, "Error sending message \(error)")
+            XCTAssertTrue(equalToken, "Token not equal")
+            
+            expectation.fulfill()
+        }
+        
+        self.waitForExpectationsWithTimeout(30, handler: { (error) -> Void in
+            if error != nil {
+                println("Error: \(error)")
+            }
+        })
+    }
 }

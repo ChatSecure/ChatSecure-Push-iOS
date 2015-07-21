@@ -74,8 +74,7 @@ func setupURLMock() {
         responseJSON: [
             "name": tokenName,
             "token": whitelistToken,
-            "apns_device": apnsToken,
-            "gcm_device": NSNull()
+            "apns_device": apnsToken
         ])
     
     tokenRequest.headers = postHeader
@@ -84,14 +83,13 @@ func setupURLMock() {
     
     var messageURL = baseURl.URLByAppendingPathComponent("messages/")
     
-    var sendMessageRequest = UMKMockURLProtocol.expectMockHTTPPostRequestWithURL(tokenURL, requestJSON: [
-        "token":whitelistToken,
-        "data":apnsToken],
-        responseStatusCode: 200,
-        responseJSON: [
-            //TODO waiting on server changes
-        ])
-    sendMessageRequest.headers = postHeader
-    //sendMessageRequest.checksHeadersWhenMatching = true
+    var request = UMKPatternMatchingMockRequest(URLPattern: messageURL.absoluteString)
+    let block: (NSURLRequest!, [NSObject : AnyObject]!) -> UMKMockURLResponder! = {request, parameters in
+        
+        //Return post data back to client
+        return UMKMockHTTPResponder(statusCode: 200, body: request.umk_HTTPBodyData());
+    }
+    request.responderGenerationBlock = block
+    UMKMockURLProtocol.expectMockRequest(request);
 }
 

@@ -21,6 +21,9 @@ public enum Method: String {
 public enum Endpoint: String {
     case Accounts = "accounts"
     case APNS = "device/apns"
+    case GCM = "device/gcm"
+    case Tokens = "tokens"
+    case Messages = "messages"
 }
 
 public enum jsonKeys: String {
@@ -33,6 +36,9 @@ public enum jsonKeys: String {
     case deviceID = "device_id"
     case active = "active"
     case dateCreated = "date_created" //ISO-8601
+    case apnsDeviceKey = "apns_device"
+    case gcmDeviceKey = "gcm_device"
+    case dataKey = "data"
 }
 
 public class Client: NSObject {
@@ -100,6 +106,61 @@ public class Client: NSObject {
                 var serialized = Serializer.device(data, kind: .iOS)
                 self.callbackQueue.addOperationWithBlock({ () -> Void in
                     completion(device:serialized.0,error:serialized.1)
+                })
+            } else {
+                //error
+            }
+        })
+        
+        dataTask.resume()
+    }
+    
+    public func createToken(apnsToken:String ,name:String, completion: (token: Token?, error: NSError?) -> Void ) {
+        var parameters = [
+            jsonKeys.apnsDeviceKey.rawValue: apnsToken
+        ]
+        parameters[jsonKeys.name.rawValue] = name
+        
+        var request = self.request(Method.POST, endpoint: Endpoint.Tokens, jsonDictionary: parameters).0
+        
+        var dataTask = self.urlSession.dataTaskWithRequest(request, completionHandler: { (responseData, response, responseError) -> Void in
+            if responseError != nil {
+                self.callbackQueue.addOperationWithBlock({
+                    completion(token:nil,error:responseError)
+                })
+                return
+            }
+            
+            if let data = responseData {
+                var serialized = Serializer.token(data)
+                self.callbackQueue.addOperationWithBlock({ () -> Void in
+                    completion(token:serialized.0,error:serialized.1)
+                })
+            } else {
+                //error
+            }
+        })
+        
+        dataTask.resume()
+    }
+    
+    public func sendMessage(message:Message, completion: (message: Message?, error: NSError?) -> Void ) {
+        var jsonDictionary = Deserializer.jsonValue(message)
+        
+        var request = self.request(.POST, endpoint: .Messages, jsonDictionary: jsonDictionary).0
+        
+        var dataTask = self.urlSession.dataTaskWithRequest(request, completionHandler: { (responseData, response, responseError) -> Void in
+            if responseError != nil {
+                self.callbackQueue.addOperationWithBlock({
+                    completion(message:nil,error:responseError)
+                })
+                return
+            }
+            
+            if let data = responseData {
+                var serialized = Serializer.message(data)
+                self.callbackQueue.addOperationWithBlock({ () -> Void in
+                    completion(message:serialized.0,error:serialized.1)
                 })
             } else {
                 //error
