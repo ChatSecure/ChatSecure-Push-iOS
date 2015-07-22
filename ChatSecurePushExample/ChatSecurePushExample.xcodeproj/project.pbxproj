@@ -7,6 +7,7 @@
 	objects = {
 
 /* Begin PBXBuildFile section */
+		637BAEBA1B5ED006007CC92A /* AccountDetailViewController.swift in Sources */ = {isa = PBXBuildFile; fileRef = 637BAEB91B5ED005007CC92A /* AccountDetailViewController.swift */; };
 		638C25301B4C43D600AB62CB /* AppDelegate.swift in Sources */ = {isa = PBXBuildFile; fileRef = 638C252F1B4C43D600AB62CB /* AppDelegate.swift */; };
 		638C25321B4C43D600AB62CB /* ViewController.swift in Sources */ = {isa = PBXBuildFile; fileRef = 638C25311B4C43D600AB62CB /* ViewController.swift */; };
 		638C25351B4C43D600AB62CB /* Main.storyboard in Resources */ = {isa = PBXBuildFile; fileRef = 638C25331B4C43D600AB62CB /* Main.storyboard */; };
@@ -15,6 +16,7 @@
 		638C25461B4C43D600AB62CB /* ChatSecurePushExampleTests.swift in Sources */ = {isa = PBXBuildFile; fileRef = 638C25451B4C43D600AB62CB /* ChatSecurePushExampleTests.swift */; };
 		638C255C1B4C7BB300AB62CB /* URLMockSetup.swift in Sources */ = {isa = PBXBuildFile; fileRef = 638C255B1B4C7BB300AB62CB /* URLMockSetup.swift */; };
 		B44692DF3ADCB0AD0AEE220A /* Pods_ChatSecurePushExampleTests.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = B0A70582EEF616C97837BB4F /* Pods_ChatSecurePushExampleTests.framework */; settings = {ATTRIBUTES = (Weak, ); }; };
+		D2D8FD5BCA6B4F0C8BEDD019 /* Pods_ChatSecurePushExample.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = E91C72CB816DA9FFCEA2E946 /* Pods_ChatSecurePushExample.framework */; settings = {ATTRIBUTES = (Weak, ); }; };
 /* End PBXBuildFile section */
 
 /* Begin PBXContainerItemProxy section */
@@ -29,6 +31,7 @@
 
 /* Begin PBXFileReference section */
 		3E9C4898BF07B6FE2B602C4A /* Pods-ChatSecurePushExampleTests.debug.xcconfig */ = {isa = PBXFileReference; includeInIndex = 1; lastKnownFileType = text.xcconfig; name = "Pods-ChatSecurePushExampleTests.debug.xcconfig"; path = "Pods/Target Support Files/Pods-ChatSecurePushExampleTests/Pods-ChatSecurePushExampleTests.debug.xcconfig"; sourceTree = "<group>"; };
+		637BAEB91B5ED005007CC92A /* AccountDetailViewController.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = AccountDetailViewController.swift; sourceTree = "<group>"; };
 		638C252A1B4C43D600AB62CB /* ChatSecurePushExample.app */ = {isa = PBXFileReference; explicitFileType = wrapper.application; includeInIndex = 0; path = ChatSecurePushExample.app; sourceTree = BUILT_PRODUCTS_DIR; };
 		638C252E1B4C43D600AB62CB /* Info.plist */ = {isa = PBXFileReference; lastKnownFileType = text.plist.xml; path = Info.plist; sourceTree = "<group>"; };
 		638C252F1B4C43D600AB62CB /* AppDelegate.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = AppDelegate.swift; sourceTree = "<group>"; };
@@ -43,6 +46,9 @@
 		638C255B1B4C7BB300AB62CB /* URLMockSetup.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = URLMockSetup.swift; sourceTree = "<group>"; };
 		857FDD41676BA111B20EC5CE /* Pods-ChatSecurePushExampleTests.release.xcconfig */ = {isa = PBXFileReference; includeInIndex = 1; lastKnownFileType = text.xcconfig; name = "Pods-ChatSecurePushExampleTests.release.xcconfig"; path = "Pods/Target Support Files/Pods-ChatSecurePushExampleTests/Pods-ChatSecurePushExampleTests.release.xcconfig"; sourceTree = "<group>"; };
 		B0A70582EEF616C97837BB4F /* Pods_ChatSecurePushExampleTests.framework */ = {isa = PBXFileReference; explicitFileType = wrapper.framework; includeInIndex = 0; path = Pods_ChatSecurePushExampleTests.framework; sourceTree = BUILT_PRODUCTS_DIR; };
+		B81CC5143926614400B4A04D /* Pods-ChatSecurePushExample.release.xcconfig */ = {isa = PBXFileReference; includeInIndex = 1; lastKnownFileType = text.xcconfig; name = "Pods-ChatSecurePushExample.release.xcconfig"; path = "Pods/Target Support Files/Pods-ChatSecurePushExample/Pods-ChatSecurePushExample.release.xcconfig"; sourceTree = "<group>"; };
+		E91C72CB816DA9FFCEA2E946 /* Pods_ChatSecurePushExample.framework */ = {isa = PBXFileReference; explicitFileType = wrapper.framework; includeInIndex = 0; path = Pods_ChatSecurePushExample.framework; sourceTree = BUILT_PRODUCTS_DIR; };
+		EC74D33FAE5F0D0C3CC632E2 /* Pods-ChatSecurePushExample.debug.xcconfig */ = {isa = PBXFileReference; includeInIndex = 1; lastKnownFileType = text.xcconfig; name = "Pods-ChatSecurePushExample.debug.xcconfig"; path = "Pods/Target Support Files/Pods-ChatSecurePushExample/Pods-ChatSecurePushExample.debug.xcconfig"; sourceTree = "<group>"; };
 /* End PBXFileReference section */
 
 /* Begin PBXFrameworksBuildPhase section */
@@ -50,6 +56,7 @@
 			isa = PBXFrameworksBuildPhase;
 			buildActionMask = 2147483647;
 			files = (
+				D2D8FD5BCA6B4F0C8BEDD019 /* Pods_ChatSecurePushExample.framework in Frameworks */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
@@ -69,6 +76,8 @@
 			children = (
 				3E9C4898BF07B6FE2B602C4A /* Pods-ChatSecurePushExampleTests.debug.xcconfig */,
 				857FDD41676BA111B20EC5CE /* Pods-ChatSecurePushExampleTests.release.xcconfig */,
+				EC74D33FAE5F0D0C3CC632E2 /* Pods-ChatSecurePushExample.debug.xcconfig */,
+				B81CC5143926614400B4A04D /* Pods-ChatSecurePushExample.release.xcconfig */,
 			);
 			name = Pods;
 			sourceTree = "<group>";
@@ -77,6 +86,7 @@
 			isa = PBXGroup;
 			children = (
 				B0A70582EEF616C97837BB4F /* Pods_ChatSecurePushExampleTests.framework */,
+				E91C72CB816DA9FFCEA2E946 /* Pods_ChatSecurePushExample.framework */,
 			);
 			name = Frameworks;
 			sourceTree = "<group>";
@@ -106,6 +116,7 @@
 			children = (
 				638C252F1B4C43D600AB62CB /* AppDelegate.swift */,
 				638C25311B4C43D600AB62CB /* ViewController.swift */,
+				637BAEB91B5ED005007CC92A /* AccountDetailViewController.swift */,
 				638C25331B4C43D600AB62CB /* Main.storyboard */,
 				638C25361B4C43D600AB62CB /* Images.xcassets */,
 				638C25381B4C43D600AB62CB /* LaunchScreen.xib */,
@@ -148,9 +159,12 @@
 			isa = PBXNativeTarget;
 			buildConfigurationList = 638C25491B4C43D600AB62CB /* Build configuration list for PBXNativeTarget "ChatSecurePushExample" */;
 			buildPhases = (
+				810A28CB31247EAD4085D009 /* Check Pods Manifest.lock */,
 				638C25261B4C43D600AB62CB /* Sources */,
 				638C25271B4C43D600AB62CB /* Frameworks */,
 				638C25281B4C43D600AB62CB /* Resources */,
+				EF407A684FF8E7653173B510 /* Embed Pods Frameworks */,
+				7AE3ACBECEDF550F7137D65C /* Copy Pods Resources */,
 			);
 			buildRules = (
 			);
@@ -193,6 +207,11 @@
 				TargetAttributes = {
 					638C25291B4C43D600AB62CB = {
 						CreatedOnToolsVersion = 6.4;
+						SystemCapabilities = {
+							com.apple.BackgroundModes = {
+								enabled = 1;
+							};
+						};
 					};
 					638C253E1B4C43D600AB62CB = {
 						CreatedOnToolsVersion = 6.4;
@@ -270,6 +289,51 @@
 			shellScript = "\"${SRCROOT}/Pods/Target Support Files/Pods-ChatSecurePushExampleTests/Pods-ChatSecurePushExampleTests-frameworks.sh\"\n";
 			showEnvVarsInLog = 0;
 		};
+		7AE3ACBECEDF550F7137D65C /* Copy Pods Resources */ = {
+			isa = PBXShellScriptBuildPhase;
+			buildActionMask = 2147483647;
+			files = (
+			);
+			inputPaths = (
+			);
+			name = "Copy Pods Resources";
+			outputPaths = (
+			);
+			runOnlyForDeploymentPostprocessing = 0;
+			shellPath = /bin/sh;
+			shellScript = "\"${SRCROOT}/Pods/Target Support Files/Pods-ChatSecurePushExample/Pods-ChatSecurePushExample-resources.sh\"\n";
+			showEnvVarsInLog = 0;
+		};
+		810A28CB31247EAD4085D009 /* Check Pods Manifest.lock */ = {
+			isa = PBXShellScriptBuildPhase;
+			buildActionMask = 2147483647;
+			files = (
+			);
+			inputPaths = (
+			);
+			name = "Check Pods Manifest.lock";
+			outputPaths = (
+			);
+			runOnlyForDeploymentPostprocessing = 0;
+			shellPath = /bin/sh;
+			shellScript = "diff \"${PODS_ROOT}/../Podfile.lock\" \"${PODS_ROOT}/Manifest.lock\" > /dev/null\nif [[ $? != 0 ]] ; then\n    cat << EOM\nerror: The sandbox is not in sync with the Podfile.lock. Run 'pod install' or update your CocoaPods installation.\nEOM\n    exit 1\nfi\n";
+			showEnvVarsInLog = 0;
+		};
+		EF407A684FF8E7653173B510 /* Embed Pods Frameworks */ = {
+			isa = PBXShellScriptBuildPhase;
+			buildActionMask = 2147483647;
+			files = (
+			);
+			inputPaths = (
+			);
+			name = "Embed Pods Frameworks";
+			outputPaths = (
+			);
+			runOnlyForDeploymentPostprocessing = 0;
+			shellPath = /bin/sh;
+			shellScript = "\"${SRCROOT}/Pods/Target Support Files/Pods-ChatSecurePushExample/Pods-ChatSecurePushExample-frameworks.sh\"\n";
+			showEnvVarsInLog = 0;
+		};
 		F151A7B9D495682D50A66F28 /* Copy Pods Resources */ = {
 			isa = PBXShellScriptBuildPhase;
 			buildActionMask = 2147483647;
@@ -292,6 +356,7 @@
 			isa = PBXSourcesBuildPhase;
 			buildActionMask = 2147483647;
 			files = (
+				637BAEBA1B5ED006007CC92A /* AccountDetailViewController.swift in Sources */,
 				638C25321B4C43D600AB62CB /* ViewController.swift in Sources */,
 				638C25301B4C43D600AB62CB /* AppDelegate.swift in Sources */,
 			);
@@ -421,16 +486,19 @@
 		};
 		638C254A1B4C43D600AB62CB /* Debug */ = {
 			isa = XCBuildConfiguration;
+			baseConfigurationReference = EC74D33FAE5F0D0C3CC632E2 /* Pods-ChatSecurePushExample.debug.xcconfig */;
 			buildSettings = {
 				ASSETCATALOG_COMPILER_APPICON_NAME = AppIcon;
 				INFOPLIST_FILE = ChatSecurePushExample/Info.plist;
 				LD_RUNPATH_SEARCH_PATHS = "$(inherited) @executable_path/Frameworks";
 				PRODUCT_NAME = "$(TARGET_NAME)";
+				PROVISIONING_PROFILE = "458fe0b8-beba-4552-b9b0-6e1e10312bed";
 			};
 			name = Debug;
 		};
 		638C254B1B4C43D600AB62CB /* Release */ = {
 			isa = XCBuildConfiguration;
+			baseConfigurationReference = B81CC5143926614400B4A04D /* Pods-ChatSecurePushExample.release.xcconfig */;
 			buildSettings = {
 				ASSETCATALOG_COMPILER_APPICON_NAME = AppIcon;
 				INFOPLIST_FILE = ChatSecurePushExample/Info.plist;

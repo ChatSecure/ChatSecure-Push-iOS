@@ -147,4 +147,21 @@ class ChatSecurePushExampleTests: XCTestCase {
             }
         })
     }
+    
+    func testAPNSResponse() {
+        var dict : [String: AnyObject] = ["aps" : ["content-available" : 1],"message": ["token": "d1a2b6113bc9b8dd40982881fd2734daf407ea85"]]
+        
+        var message = Deserializer.messageFromDictionary(dict)
+        if let messageDict = (dict["message"] as? [String: AnyObject]) {
+            if let token = messageDict["token"] as? String {
+                var equalToken = message?.token == token
+                XCTAssertTrue(equalToken, "Not equal token")
+            } else {
+                XCTAssertTrue(false, "")
+            }
+        } else {
+            XCTAssertTrue(false, "")
+        }
+        
+    }
 }

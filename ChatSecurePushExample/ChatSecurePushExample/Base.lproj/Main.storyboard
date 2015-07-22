@@ -1,13 +1,29 @@
 <?xml version="1.0" encoding="UTF-8" standalone="no"?>
-<document type="com.apple.InterfaceBuilder3.CocoaTouch.Storyboard.XIB" version="3.0" toolsVersion="6211" systemVersion="14A298i" targetRuntime="iOS.CocoaTouch" propertyAccessControl="none" useAutolayout="YES" useTraitCollections="YES" initialViewController="BYZ-38-t0r">
+<document type="com.apple.InterfaceBuilder3.CocoaTouch.Storyboard.XIB" version="3.0" toolsVersion="7706" systemVersion="14E46" targetRuntime="iOS.CocoaTouch" propertyAccessControl="none" useAutolayout="YES" useTraitCollections="YES" initialViewController="WIS-zk-jsY">
     <dependencies>
-        <plugIn identifier="com.apple.InterfaceBuilder.IBCocoaTouchPlugin" version="6204"/>
+        <plugIn identifier="com.apple.InterfaceBuilder.IBCocoaTouchPlugin" version="7703"/>
     </dependencies>
     <scenes>
+        <!--Navigation Controller-->
+        <scene sceneID="8MX-fI-BRp">
+            <objects>
+                <navigationController id="WIS-zk-jsY" sceneMemberID="viewController">
+                    <navigationBar key="navigationBar" contentMode="scaleToFill" id="iLh-6u-jFV">
+                        <rect key="frame" x="0.0" y="0.0" width="320" height="44"/>
+                        <autoresizingMask key="autoresizingMask"/>
+                    </navigationBar>
+                    <connections>
+                        <segue destination="BYZ-38-t0r" kind="relationship" relationship="rootViewController" id="nus-Kb-GfJ"/>
+                    </connections>
+                </navigationController>
+                <placeholder placeholderIdentifier="IBFirstResponder" id="E9L-QY-Hlp" userLabel="First Responder" sceneMemberID="firstResponder"/>
+            </objects>
+            <point key="canvasLocation" x="-562" y="377"/>
+        </scene>
         <!--View Controller-->
         <scene sceneID="tne-QT-ifu">
             <objects>
-                <viewController id="BYZ-38-t0r" customClass="ViewController" customModuleProvider="target" sceneMemberID="viewController">
+                <viewController id="BYZ-38-t0r" customClass="ViewController" customModule="ChatSecurePushExample" customModuleProvider="target" sceneMemberID="viewController">
                     <layoutGuides>
                         <viewControllerLayoutGuide type="top" id="y3c-jy-aDJ"/>
                         <viewControllerLayoutGuide type="bottom" id="wfy-db-euE"/>
@@ -15,11 +31,130 @@
                     <view key="view" contentMode="scaleToFill" id="8bC-Xf-vdC">
                         <rect key="frame" x="0.0" y="0.0" width="600" height="600"/>
                         <autoresizingMask key="autoresizingMask" widthSizable="YES" heightSizable="YES"/>
+                        <subviews>
+                            <button opaque="NO" contentMode="scaleToFill" contentHorizontalAlignment="center" contentVerticalAlignment="center" buttonType="roundedRect" lineBreakMode="middleTruncation" translatesAutoresizingMaskIntoConstraints="NO" id="8LV-Pu-CAE">
+                                <rect key="frame" x="229" y="520" width="142" height="30"/>
+                                <state key="normal" title="Create New Account">
+                                    <color key="titleShadowColor" white="0.5" alpha="1" colorSpace="calibratedWhite"/>
+                                </state>
+                                <connections>
+                                    <segue destination="weS-wG-yjH" kind="show" id="giX-1K-Dnd"/>
+                                </connections>
+                            </button>
+                            <label opaque="NO" userInteractionEnabled="NO" contentMode="left" horizontalHuggingPriority="251" verticalHuggingPriority="251" text="ChatSecure Push Example App" lineBreakMode="tailTruncation" baselineAdjustment="alignBaselines" adjustsFontSizeToFit="NO" translatesAutoresizingMaskIntoConstraints="NO" id="4Hh-ce-McX">
+                                <rect key="frame" x="156" y="114" width="289" height="24"/>
+                                <fontDescription key="fontDescription" type="boldSystem" pointSize="20"/>
+                                <color key="textColor" cocoaTouchSystemColor="darkTextColor"/>
+                                <nil key="highlightedColor"/>
+                            </label>
+                            <textField opaque="NO" clipsSubviews="YES" contentMode="scaleToFill" contentHorizontalAlignment="left" contentVerticalAlignment="center" borderStyle="roundedRect" placeholder="Username" minimumFontSize="17" clearButtonMode="whileEditing" translatesAutoresizingMaskIntoConstraints="NO" id="34f-Gs-cQd">
+                                <rect key="frame" x="150" y="168" width="300" height="30"/>
+                                <constraints>
+                                    <constraint firstAttribute="width" constant="300" id="Ob0-PJ-A4U"/>
+                                </constraints>
+                                <fontDescription key="fontDescription" type="system" pointSize="14"/>
+                                <textInputTraits key="textInputTraits"/>
+                            </textField>
+                            <textField opaque="NO" clipsSubviews="YES" contentMode="scaleToFill" contentHorizontalAlignment="left" contentVerticalAlignment="center" borderStyle="roundedRect" placeholder="Password" clearsOnBeginEditing="YES" minimumFontSize="17" clearButtonMode="whileEditing" translatesAutoresizingMaskIntoConstraints="NO" id="dtL-uW-5ua">
+                                <rect key="frame" x="150" y="208" width="300" height="30"/>
+                                <constraints>
+                                    <constraint firstAttribute="width" relation="greaterThanOrEqual" constant="300" id="Hdo-Ux-x0o"/>
+                                    <constraint firstAttribute="width" constant="300" id="oyp-rV-7gQ"/>
+                                </constraints>
+                                <fontDescription key="fontDescription" type="system" pointSize="14"/>
+                                <textInputTraits key="textInputTraits" secureTextEntry="YES"/>
+                            </textField>
+                        </subviews>
                         <color key="backgroundColor" white="1" alpha="1" colorSpace="custom" customColorSpace="calibratedWhite"/>
+                        <constraints>
+                            <constraint firstItem="dtL-uW-5ua" firstAttribute="top" secondItem="34f-Gs-cQd" secondAttribute="bottom" constant="10" id="530-2K-Pdh"/>
+                            <constraint firstItem="wfy-db-euE" firstAttribute="top" secondItem="8LV-Pu-CAE" secondAttribute="bottom" constant="50" id="8ki-Ip-cwY"/>
+                            <constraint firstAttribute="centerX" secondItem="4Hh-ce-McX" secondAttribute="centerX" id="S1i-8l-ESn"/>
+                            <constraint firstAttribute="centerX" secondItem="8LV-Pu-CAE" secondAttribute="centerX" id="ZCP-f0-H0z"/>
+                            <constraint firstAttribute="centerX" secondItem="dtL-uW-5ua" secondAttribute="centerX" id="aQN-Qe-9PQ"/>
+                            <constraint firstItem="4Hh-ce-McX" firstAttribute="top" secondItem="y3c-jy-aDJ" secondAttribute="bottom" constant="50" id="kUz-Od-wLT"/>
+                            <constraint firstAttribute="centerX" secondItem="34f-Gs-cQd" secondAttribute="centerX" id="s3V-hb-iVr"/>
+                            <constraint firstItem="34f-Gs-cQd" firstAttribute="top" secondItem="4Hh-ce-McX" secondAttribute="bottom" constant="30" id="s3w-bz-yox"/>
+                            <constraint firstAttribute="centerX" secondItem="34f-Gs-cQd" secondAttribute="centerX" id="tRo-ha-SGJ"/>
+                        </constraints>
                     </view>
+                    <navigationItem key="navigationItem" id="JVW-Re-zEI"/>
+                    <connections>
+                        <outlet property="passwordTextField" destination="dtL-uW-5ua" id="OVZ-bb-IHS"/>
+                        <outlet property="usernameTextField" destination="34f-Gs-cQd" id="qhg-ct-kUr"/>
+                    </connections>
                 </viewController>
                 <placeholder placeholderIdentifier="IBFirstResponder" id="dkx-z0-nzr" sceneMemberID="firstResponder"/>
             </objects>
+        </scene>
+        <!--Account Detail View Controller-->
+        <scene sceneID="Us8-X3-xcx">
+            <objects>
+                <viewController id="weS-wG-yjH" customClass="AccountDetailViewController" customModule="ChatSecurePushExample" customModuleProvider="target" sceneMemberID="viewController">
+                    <layoutGuides>
+                        <viewControllerLayoutGuide type="top" id="dg1-m6-o8M"/>
+                        <viewControllerLayoutGuide type="bottom" id="2mF-Bi-mQx"/>
+                    </layoutGuides>
+                    <view key="view" contentMode="scaleToFill" id="7mN-Wa-o9h">
+                        <rect key="frame" x="0.0" y="0.0" width="600" height="600"/>
+                        <autoresizingMask key="autoresizingMask" widthSizable="YES" heightSizable="YES"/>
+                        <subviews>
+                            <label opaque="NO" userInteractionEnabled="NO" contentMode="left" horizontalHuggingPriority="251" verticalHuggingPriority="251" text="Checking Account Status..." textAlignment="center" lineBreakMode="tailTruncation" baselineAdjustment="alignBaselines" adjustsFontSizeToFit="NO" translatesAutoresizingMaskIntoConstraints="NO" id="aTP-0A-BkY">
+                                <rect key="frame" x="150" y="114" width="300" height="21"/>
+                                <constraints>
+                                    <constraint firstAttribute="width" constant="300" id="1AD-d1-dbn"/>
+                                </constraints>
+                                <fontDescription key="fontDescription" type="system" pointSize="17"/>
+                                <color key="textColor" cocoaTouchSystemColor="darkTextColor"/>
+                                <nil key="highlightedColor"/>
+                            </label>
+                            <button opaque="NO" contentMode="scaleToFill" contentHorizontalAlignment="center" contentVerticalAlignment="center" buttonType="roundedRect" lineBreakMode="middleTruncation" translatesAutoresizingMaskIntoConstraints="NO" id="4cn-ME-81l">
+                                <rect key="frame" x="249" y="235" width="102" height="30"/>
+                                <state key="normal" title="Send Message">
+                                    <color key="titleShadowColor" white="0.5" alpha="1" colorSpace="calibratedWhite"/>
+                                </state>
+                                <connections>
+                                    <action selector="sendMessageButtonPressed:" destination="weS-wG-yjH" eventType="touchUpInside" id="kcx-vh-EJe"/>
+                                </connections>
+                            </button>
+                            <textField opaque="NO" clipsSubviews="YES" contentMode="scaleToFill" contentHorizontalAlignment="left" contentVerticalAlignment="center" borderStyle="roundedRect" placeholder="Token" minimumFontSize="17" translatesAutoresizingMaskIntoConstraints="NO" id="fN9-ud-Ivb">
+                                <rect key="frame" x="150" y="185" width="300" height="30"/>
+                                <constraints>
+                                    <constraint firstAttribute="width" constant="300" id="FPI-dW-WUr"/>
+                                </constraints>
+                                <fontDescription key="fontDescription" type="system" pointSize="14"/>
+                                <textInputTraits key="textInputTraits"/>
+                            </textField>
+                            <button opaque="NO" contentMode="scaleToFill" contentHorizontalAlignment="center" contentVerticalAlignment="center" buttonType="roundedRect" lineBreakMode="middleTruncation" translatesAutoresizingMaskIntoConstraints="NO" id="YZq-0m-ytp">
+                                <rect key="frame" x="221" y="305" width="159" height="30"/>
+                                <state key="normal" title="Share New Push Token">
+                                    <color key="titleShadowColor" white="0.5" alpha="1" colorSpace="calibratedWhite"/>
+                                </state>
+                                <connections>
+                                    <action selector="whitelistTokenButtonPressed:" destination="weS-wG-yjH" eventType="touchUpInside" id="ngX-uJ-mhT"/>
+                                </connections>
+                            </button>
+                        </subviews>
+                        <color key="backgroundColor" white="1" alpha="1" colorSpace="calibratedWhite"/>
+                        <constraints>
+                            <constraint firstItem="YZq-0m-ytp" firstAttribute="top" secondItem="4cn-ME-81l" secondAttribute="bottom" constant="40" id="1qj-VM-qCv"/>
+                            <constraint firstAttribute="centerX" secondItem="fN9-ud-Ivb" secondAttribute="centerX" id="H8I-MY-ZJH"/>
+                            <constraint firstAttribute="centerX" secondItem="aTP-0A-BkY" secondAttribute="centerX" id="LIL-fW-gdP"/>
+                            <constraint firstItem="aTP-0A-BkY" firstAttribute="top" secondItem="dg1-m6-o8M" secondAttribute="bottom" constant="50" id="OLT-hU-ebw"/>
+                            <constraint firstItem="fN9-ud-Ivb" firstAttribute="top" secondItem="aTP-0A-BkY" secondAttribute="bottom" constant="50" id="Ob7-Ud-NlX"/>
+                            <constraint firstItem="4cn-ME-81l" firstAttribute="top" secondItem="fN9-ud-Ivb" secondAttribute="bottom" constant="20" id="R2Y-Wq-8b3"/>
+                            <constraint firstAttribute="centerX" secondItem="YZq-0m-ytp" secondAttribute="centerX" id="asn-dX-w5m"/>
+                            <constraint firstAttribute="centerX" secondItem="4cn-ME-81l" secondAttribute="centerX" id="vbL-xi-Y0r"/>
+                        </constraints>
+                    </view>
+                    <connections>
+                        <outlet property="accountStatusLabel" destination="aTP-0A-BkY" id="jYd-yD-JxS"/>
+                        <outlet property="messageTokenTextField" destination="fN9-ud-Ivb" id="MZK-nR-110"/>
+                    </connections>
+                </viewController>
+                <placeholder placeholderIdentifier="IBFirstResponder" id="NcQ-wa-zEM" userLabel="First Responder" sceneMemberID="firstResponder"/>
+            </objects>
+            <point key="canvasLocation" x="921" y="383"/>
         </scene>
     </scenes>
 </document>

@@ -7,6 +7,10 @@ use_frameworks!
 #
 # end
 
+target 'ChatSecurePushExample' do
+  pod 'ChatSecure-Push-iOS', :path => '../ChatSecure-Push-iOS.podspec'
+end
+
 target 'ChatSecurePushExampleTests' do
   platform :ios, '8.0'
   pod 'ChatSecure-Push-iOS', :path => '../ChatSecure-Push-iOS.podspec'
