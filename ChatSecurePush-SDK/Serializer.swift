@@ -9,7 +9,7 @@
 import Foundation
 
 
-public class Deserializer {
+public class Serializer {
     
     public class func jsonValue(object:AnyObject) -> [String:AnyObject]? {
         

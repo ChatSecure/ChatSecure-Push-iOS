@@ -11,7 +11,7 @@ import Foundation
 var dispatchToken: dispatch_once_t = 0
 var defaultDateFormatter = NSDateFormatter()
 
-public class Serializer {
+public class Deserializer {
     
     //Unsure if this is the most 'Swift' way to do this
     class func dateFormatter() -> NSDateFormatter {
@@ -62,31 +62,40 @@ public class Serializer {
     public class func token(data: NSData) -> (Token?, NSError?) {
         var error: NSError? = nil
         var token: Token? = nil
-        if let json = NSJSONSerialization.JSONObjectWithData(data, options: NSJSONReadingOptions.allZeros, error: &error) as? [String: String] {
-            if let tokenString = json[jsonKeys.token.rawValue] {
-                if let registrationId = json[jsonKeys.apnsDeviceKey.rawValue] {
+        if let json = NSJSONSerialization.JSONObjectWithData(data, options: NSJSONReadingOptions.allZeros, error: &error) as? [String: AnyObject] {
+            if let tokenString = json[jsonKeys.token.rawValue] as? String {
+                if let registrationId = json[jsonKeys.apnsDeviceKey.rawValue] as? String {
                     token = Token(tokenString: tokenString, deviceID: registrationId)
                 }
                 
-                if let registrationId = json[jsonKeys.gcmDeviceKey.rawValue] {
+                if let registrationId = json[jsonKeys.gcmDeviceKey.rawValue] as? String {
                     token = Token(tokenString: tokenString, deviceID: registrationId)
                 }
                 
-                token?.name = json[jsonKeys.name.rawValue]
+                token?.name = json[jsonKeys.name.rawValue] as? String
             }
         }
         
         return (token, error)
     }
     
+    public class func messageFromDictionary(userInfo:[NSObject: AnyObject]) -> Message? {
+        if let message = userInfo[jsonKeys.messageKey.rawValue] as? [String: AnyObject] {
+            return self.messageFromDictionary(message)
+        } else {
+            if let tokenString = userInfo[jsonKeys.token.rawValue] as? String {
+                var dataDictionary = userInfo[jsonKeys.dataKey.rawValue] as? [String: AnyObject];
+                return Message(token: tokenString, data: dataDictionary)
+            }
+        }
+        return nil
+    }
+    
     public class func message(data: NSData) -> (Message?, NSError?) {
         var error: NSError? = nil
         var message: Message? = nil
         if let json = NSJSONSerialization.JSONObjectWithData(data, options: NSJSONReadingOptions.allZeros, error: &error) as? [String: AnyObject] {
-            if let tokenString = json[jsonKeys.token.rawValue] as? String {
-                var dataDictionary = json[jsonKeys.dataKey.rawValue] as? [String: AnyObject];
-                message = Message(token: tokenString, data: dataDictionary)
-            }
+            message = self.messageFromDictionary(json)
         }
         return (message, error)
     }

@@ -39,6 +39,7 @@ public enum jsonKeys: String {
     case apnsDeviceKey = "apns_device"
     case gcmDeviceKey = "gcm_device"
     case dataKey = "data"
+    case messageKey = "message"
 }
 
 public class Client: NSObject {
@@ -72,7 +73,7 @@ public class Client: NSObject {
             }
             
             if let data = responseData {
-                var serialized = Serializer.account(data)
+                var serialized = Deserializer.account(data)
                 self.callbackQueue.addOperationWithBlock({ () -> Void in
                     completion(account:serialized.0,error:serialized.1)
                 })
@@ -103,7 +104,7 @@ public class Client: NSObject {
             }
             
             if let data = responseData {
-                var serialized = Serializer.device(data, kind: .iOS)
+                var serialized = Deserializer.device(data, kind: .iOS)
                 self.callbackQueue.addOperationWithBlock({ () -> Void in
                     completion(device:serialized.0,error:serialized.1)
                 })
@@ -115,7 +116,7 @@ public class Client: NSObject {
         dataTask.resume()
     }
     
-    public func createToken(apnsToken:String ,name:String, completion: (token: Token?, error: NSError?) -> Void ) {
+    public func createToken(apnsToken:String ,name:String?, completion: (token: Token?, error: NSError?) -> Void ) {
         var parameters = [
             jsonKeys.apnsDeviceKey.rawValue: apnsToken
         ]
@@ -132,7 +133,7 @@ public class Client: NSObject {
             }
             
             if let data = responseData {
-                var serialized = Serializer.token(data)
+                var serialized = Deserializer.token(data)
                 self.callbackQueue.addOperationWithBlock({ () -> Void in
                     completion(token:serialized.0,error:serialized.1)
                 })
@@ -145,7 +146,7 @@ public class Client: NSObject {
     }
     
     public func sendMessage(message:Message, completion: (message: Message?, error: NSError?) -> Void ) {
-        var jsonDictionary = Deserializer.jsonValue(message)
+        var jsonDictionary = Serializer.jsonValue(message)
         
         var request = self.request(.POST, endpoint: .Messages, jsonDictionary: jsonDictionary).0
         
@@ -158,7 +159,7 @@ public class Client: NSObject {
             }
             
             if let data = responseData {
-                var serialized = Serializer.message(data)
+                var serialized = Deserializer.message(data)
                 self.callbackQueue.addOperationWithBlock({ () -> Void in
                     completion(message:serialized.0,error:serialized.1)
                 })
