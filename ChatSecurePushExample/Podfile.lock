@@ -1,5 +1,5 @@
 PODS:
-  - ChatSecure-Push-iOS (0.0.1)
+  - ChatSecure-Push-iOS (0.1)
   - SOCKit (1.1)
   - URLMock (1.2.3):
     - URLMock/Core (= 1.2.3)
@@ -20,7 +20,7 @@ EXTERNAL SOURCES:
     :path: "../ChatSecure-Push-iOS.podspec"
 
 SPEC CHECKSUMS:
-  ChatSecure-Push-iOS: 5993dcaf69c26b96706e08c08afe3d037867fb10
+  ChatSecure-Push-iOS: 80ce8a66f8a43bb99dc0c38609243a3f07edf8ff
   SOCKit: c7376ac262bea9115b8f749358f762522a47d392
   URLMock: 5d14a89942559f7948793d2f9aaffc25a6af2166
 

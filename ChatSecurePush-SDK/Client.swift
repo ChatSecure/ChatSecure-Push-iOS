@@ -42,6 +42,10 @@ public enum jsonKeys: String {
     case messageKey = "message"
 }
 
+public enum errorDomain: String {
+    case chatsecurePush = "chatsecure.push"
+}
+
 public class Client: NSObject {
     public let baseUrl: NSURL
     public let urlSession: NSURLSession
@@ -65,9 +69,16 @@ public class Client: NSObject {
         
         var dataTask = self.urlSession.dataTaskWithRequest(self.request(.POST, endpoint:.Accounts, jsonDictionary:parameters).0, completionHandler: { (responseData, response, responseError) -> Void in
             
-            if responseError != nil {
+            var error:NSError?
+            if let httpResponse = response as? NSHTTPURLResponse {
+                error = self.validate(httpResponse, responseData:responseData)
+            } else {
+                error = responseError
+            }
+            
+            if error != nil {
                 self.callbackQueue.addOperationWithBlock({
-                    completion(account:nil,error:responseError)
+                    completion(account:nil,error:error)
                 })
                 return
             }
@@ -96,9 +107,17 @@ public class Client: NSObject {
         var request = self.request(Method.POST, endpoint: Endpoint.APNS, jsonDictionary: parameters).0
         
         var dataTask = self.urlSession.dataTaskWithRequest(request, completionHandler: { (responseData, response, responseError) -> Void in
-            if responseError != nil {
+            
+            var error:NSError?
+            if let httpResponse = response as? NSHTTPURLResponse {
+                error = self.validate(httpResponse, responseData:responseData)
+            } else {
+                error = responseError
+            }
+            
+            if error != nil {
                 self.callbackQueue.addOperationWithBlock({
-                    completion(device:nil,error:responseError)
+                    completion(device:nil,error:error)
                 })
                 return
             }
@@ -125,9 +144,17 @@ public class Client: NSObject {
         var request = self.request(Method.POST, endpoint: Endpoint.Tokens, jsonDictionary: parameters).0
         
         var dataTask = self.urlSession.dataTaskWithRequest(request, completionHandler: { (responseData, response, responseError) -> Void in
-            if responseError != nil {
+            
+            var error:NSError?
+            if let httpResponse = response as? NSHTTPURLResponse {
+                error = self.validate(httpResponse, responseData:responseData)
+            } else {
+                error = responseError
+            }
+            
+            if error != nil  {
                 self.callbackQueue.addOperationWithBlock({
-                    completion(token:nil,error:responseError)
+                    completion(token:nil,error:error)
                 })
                 return
             }
@@ -151,9 +178,17 @@ public class Client: NSObject {
         var request = self.request(.POST, endpoint: .Messages, jsonDictionary: jsonDictionary).0
         
         var dataTask = self.urlSession.dataTaskWithRequest(request, completionHandler: { (responseData, response, responseError) -> Void in
-            if responseError != nil {
+            
+            var error:NSError?
+            if let httpResponse = response as? NSHTTPURLResponse {
+                error = self.validate(httpResponse, responseData:responseData)
+            } else {
+                error = responseError
+            }
+            
+            if error != nil {
                 self.callbackQueue.addOperationWithBlock({
-                    completion(message:nil,error:responseError)
+                    completion(message:nil,error:error)
                 })
                 return
             }
@@ -169,6 +204,24 @@ public class Client: NSObject {
         })
         
         dataTask.resume()
+    }
+    
+    func validate(response: NSHTTPURLResponse, responseData:NSData) -> NSError? {
+        let acceptableStatusCodes: Range<Int> = 200..<300
+        var acceptable = false
+        if response.statusCode > 199 && response.statusCode < 300 {
+            acceptable = true
+        }
+        
+        if(!acceptable) {
+            var userInfo : [NSObject:AnyObject]?
+            if let string = NSString(data: responseData, encoding: NSUTF8StringEncoding) {
+                userInfo = [NSLocalizedDescriptionKey:string]
+            }
+            return NSError(domain: errorDomain.chatsecurePush.rawValue, code: response.statusCode, userInfo: userInfo)
+        }
+        
+        return nil
     }
     
     func request(method: Method, endpoint: Endpoint, jsonDictionary:[String: AnyObject]?) -> (NSURLRequest, NSError?) {
