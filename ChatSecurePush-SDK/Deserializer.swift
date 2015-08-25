@@ -49,9 +49,10 @@ public class Deserializer {
             if let registrationID = json[jsonKeys.registrationID.rawValue] as? String {
                 var deviceName = json[jsonKeys.name.rawValue] as? String
                 var deviceID = json[jsonKeys.deviceID.rawValue] as? String
+                var id = json[jsonKeys.id.rawValue] as? String
                 if let dateCreatedString = json[jsonKeys.dateCreated.rawValue] as? String {
                     if let dateCreated = self.dateFormatter().dateFromString(dateCreatedString) {
-                        device = Device(registrationID: registrationID, dateCreated: dateCreated, name: deviceName, deviceID: deviceID)
+                        device = Device(registrationID: registrationID, dateCreated: dateCreated, name: deviceName, deviceID: deviceID, id: id)
                     }
                 }
             }
@@ -80,12 +81,14 @@ public class Deserializer {
     }
     
     public class func messageFromDictionary(userInfo:[NSObject: AnyObject]) -> Message? {
-        if let message = userInfo[jsonKeys.messageKey.rawValue] as? [String: AnyObject] {
-            return self.messageFromDictionary(message)
-        } else {
-            if let tokenString = userInfo[jsonKeys.token.rawValue] as? String {
-                var dataDictionary = userInfo[jsonKeys.dataKey.rawValue] as? [String: AnyObject];
-                return Message(token: tokenString, data: dataDictionary)
+        if let aps = userInfo[jsonKeys.apsKey.rawValue] as? [String:AnyObject] {
+            if let alert = aps[jsonKeys.alertKey.rawValue] as? [String:AnyObject] {
+                if let message = alert[jsonKeys.messageKey.rawValue] as? [String: AnyObject] {
+                    if let tokenString = message[jsonKeys.token.rawValue] as? String {
+                        var dataDictionary = message[jsonKeys.dataKey.rawValue] as? [String: AnyObject];
+                        return Message(token: tokenString, data: dataDictionary)
+                    }
+                }
             }
         }
         return nil

@@ -40,6 +40,9 @@ public enum jsonKeys: String {
     case gcmDeviceKey = "gcm_device"
     case dataKey = "data"
     case messageKey = "message"
+    case apsKey = "aps"
+    case alertKey = "alert"
+    case id = "id"
 }
 
 public enum errorDomain: String {
@@ -135,9 +138,9 @@ public class Client: NSObject {
         dataTask.resume()
     }
     
-    public func createToken(apnsToken:String ,name:String?, completion: (token: Token?, error: NSError?) -> Void ) {
+    public func createToken(id:String ,name:String?, completion: (token: Token?, error: NSError?) -> Void ) {
         var parameters = [
-            jsonKeys.apnsDeviceKey.rawValue: apnsToken
+            jsonKeys.apnsDeviceKey.rawValue: id
         ]
         parameters[jsonKeys.name.rawValue] = name
         

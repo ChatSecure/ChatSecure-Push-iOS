@@ -62,17 +62,20 @@ class AccountDetailViewController: UIViewController {
     
     @IBAction func whitelistTokenButtonPressed(sender: AnyObject?) {
         if let apnsToken = (UIApplication.sharedApplication().delegate as? AppDelegate)?.apnsToken {
-            self.client.createToken(apnsToken, name: "I'm just a test token", completion: { (token, error) -> Void in
-                if let tempToken = token {
-                    println("Token: \(token)")
-                    dispatch_async(dispatch_get_main_queue(), { () -> Void in
-                        var activityVewController = UIActivityViewController(activityItems: [tempToken.tokenString], applicationActivities: nil)
-                        self.presentViewController(activityVewController, animated: true, completion: nil)
-                    })
-                }
-                
-                
-            });
+            if let id = self.device?.id {
+                self.client.createToken(id, name: "I'm just a test token", completion: { (token, error) -> Void in
+                    if let tempToken = token {
+                        println("Token: \(token)")
+                        dispatch_async(dispatch_get_main_queue(), { () -> Void in
+                            var activityVewController = UIActivityViewController(activityItems: [tempToken.tokenString], applicationActivities: nil)
+                            self.presentViewController(activityVewController, animated: true, completion: nil)
+                        })
+                    }
+                    
+                    
+                });
+            }
+            
         }
     }
 }

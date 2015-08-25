@@ -39,15 +39,19 @@ public extension NSData {
 
 public class Device: NSObject {
     public var name: String?
+    public var id: String?
+    public var deviceID: String?
     public var registrationID: String
     public var active = true
     public let dateCreated: NSDate
     public let deviceKind = DeviceKind.unkown
     
     
-    public init (registrationID: String,dateCreated: NSDate, name: String?, deviceID: String?) {
+    public init (registrationID: String,dateCreated: NSDate, name: String?, deviceID: String?, id: String?) {
         self.name = name
         self.dateCreated = dateCreated
         self.registrationID = registrationID
+        self.deviceID = deviceID
+        self.id = id
     }
 }
