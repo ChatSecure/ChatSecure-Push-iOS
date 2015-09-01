@@ -49,205 +49,89 @@ public enum errorDomain: String {
     case chatsecurePush = "chatsecure.push"
 }
 
+public enum errorStatusCode: NSInteger {
+    case noData = 101
+}
+
 public class Client: NSObject {
     public let baseUrl: NSURL
     public let urlSession: NSURLSession
     public var callbackQueue = NSOperationQueue()
     public var account: Account?
     
+    var appleDeviceEndpoint: APNSDeviceEndpoint
+    var accountEndpoint: AccountEnpoint
+    var tokenEndpoint: TokenEndpoint
+    var messageEndpoint: MessageEndpoint
+    
     public init (baseUrl: NSURL, urlSessionConfiguration: NSURLSessionConfiguration = NSURLSessionConfiguration.defaultSessionConfiguration(),account: Account?) {
         self.baseUrl = baseUrl
         self.urlSession = NSURLSession(configuration: urlSessionConfiguration)
         self.account = account
+        self.appleDeviceEndpoint = APNSDeviceEndpoint(baseUrl: self.baseUrl)
+        self.accountEndpoint = AccountEnpoint(baseUrl: self.baseUrl)
+        self.tokenEndpoint = TokenEndpoint(baseUrl: self.baseUrl)
+        self.messageEndpoint = MessageEndpoint(baseUrl: self.baseUrl)
     }
     
+// MARK: User
     public func registerNewUser(username: String, password: String, email: String?, completion: (account: Account?,error: NSError?) -> Void) {
         
-        var parameters = [
-            jsonKeys.username.rawValue : username,
-            jsonKeys.password.rawValue : password,
-        ]
-        
-        parameters[jsonKeys.email.rawValue] = email
-        
-        var dataTask = self.urlSession.dataTaskWithRequest(self.request(.POST, endpoint:.Accounts, jsonDictionary:parameters).0, completionHandler: { (responseData, response, responseError) -> Void in
-            
-            var error:NSError?
-            if let httpResponse = response as? NSHTTPURLResponse {
-                error = self.validate(httpResponse, responseData:responseData)
-            } else {
-                error = responseError
-            }
-            
-            if error != nil {
-                self.callbackQueue.addOperationWithBlock({
-                    completion(account:nil,error:error)
-                })
-                return
-            }
-            
-            if let data = responseData {
-                var serialized = Deserializer.account(data)
-                self.callbackQueue.addOperationWithBlock({ () -> Void in
-                    completion(account:serialized.0,error:serialized.1)
-                })
-            } else {
-                //Error
-            }
+        var request = self.accountEndpoint.postRequest(username , password: password, email: email)
+        self.startDataTask(request, completionHandler: { (data, response, error) -> Void in
+            var result = self.accountEndpoint.accountFromResponse(data, response: response, error: error)
+            self.callbackQueue .addOperationWithBlock({ () -> Void in
+                completion(account: result.0,error: result.1)
+            })
         })
-        
-        dataTask.resume()
     }
     
+// MARK: Device
     public func registerDevice(APNSToken: String, name: String?, deviceID: String?, completion: (device: Device?, error: NSError?) -> Void) {
-        var parameters = [
-            jsonKeys.registrationID.rawValue: APNSToken,
-        ]
         
-        parameters[jsonKeys.name.rawValue] = name
-        parameters[jsonKeys.deviceID.rawValue] = deviceID
-        
-        var request = self.request(Method.POST, endpoint: Endpoint.APNS, jsonDictionary: parameters).0
-        
-        var dataTask = self.urlSession.dataTaskWithRequest(request, completionHandler: { (responseData, response, responseError) -> Void in
-            
-            var error:NSError?
-            if let httpResponse = response as? NSHTTPURLResponse {
-                error = self.validate(httpResponse, responseData:responseData)
-            } else {
-                error = responseError
-            }
-            
-            if error != nil {
-                self.callbackQueue.addOperationWithBlock({
-                    completion(device:nil,error:error)
-                })
-                return
-            }
-            
-            if let data = responseData {
-                var serialized = Deserializer.device(data, kind: .iOS)
-                self.callbackQueue.addOperationWithBlock({ () -> Void in
-                    completion(device:serialized.0,error:serialized.1)
-                })
-            } else {
-                //error
-            }
+        var request = self.appleDeviceEndpoint.postRequest(APNSToken, name: name, deviceID: deviceID)
+        self.startDataTask(request, completionHandler: { (responseData, response, responseError) -> Void in
+            var result = self.appleDeviceEndpoint.deviceFromResponse(responseData, response: response, error: responseError)
+            self.callbackQueue.addOperationWithBlock({ () -> Void in
+                completion(device: result.0, error: result.1)
+            })
         })
-        
-        dataTask.resume()
     }
-    
+
+// MARK: Token
     public func createToken(id:String ,name:String?, completion: (token: Token?, error: NSError?) -> Void ) {
-        var parameters = [
-            jsonKeys.apnsDeviceKey.rawValue: id
-        ]
-        parameters[jsonKeys.name.rawValue] = name
         
-        var request = self.request(Method.POST, endpoint: Endpoint.Tokens, jsonDictionary: parameters).0
-        
-        var dataTask = self.urlSession.dataTaskWithRequest(request, completionHandler: { (responseData, response, responseError) -> Void in
-            
-            var error:NSError?
-            if let httpResponse = response as? NSHTTPURLResponse {
-                error = self.validate(httpResponse, responseData:responseData)
-            } else {
-                error = responseError
-            }
-            
-            if error != nil  {
-                self.callbackQueue.addOperationWithBlock({
-                    completion(token:nil,error:error)
-                })
-                return
-            }
-            
-            if let data = responseData {
-                var serialized = Deserializer.token(data)
-                self.callbackQueue.addOperationWithBlock({ () -> Void in
-                    completion(token:serialized.0,error:serialized.1)
-                })
-            } else {
-                //error
-            }
+        var request = self.tokenEndpoint.postRequest(id , name: name)
+        self.startDataTask(request, completionHandler: { (responseData, response, responseError) -> Void in
+            var result = self.tokenEndpoint.tokenFromResponse(responseData , response: response, error: responseError)
+            self.callbackQueue.addOperationWithBlock({ () -> Void in
+                completion(token: result.0, error: result.1)
+            })
         })
-        
-        dataTask.resume()
     }
-    
+
+// MARK: Message
     public func sendMessage(message:Message, completion: (message: Message?, error: NSError?) -> Void ) {
-        var jsonDictionary = Serializer.jsonValue(message)
-        
-        var request = self.request(.POST, endpoint: .Messages, jsonDictionary: jsonDictionary).0
-        
-        var dataTask = self.urlSession.dataTaskWithRequest(request, completionHandler: { (responseData, response, responseError) -> Void in
-            
-            var error:NSError?
-            if let httpResponse = response as? NSHTTPURLResponse {
-                error = self.validate(httpResponse, responseData:responseData)
-            } else {
-                error = responseError
-            }
-            
-            if error != nil {
-                self.callbackQueue.addOperationWithBlock({
-                    completion(message:nil,error:error)
-                })
-                return
-            }
-            
-            if let data = responseData {
-                var serialized = Deserializer.message(data)
-                self.callbackQueue.addOperationWithBlock({ () -> Void in
-                    completion(message:serialized.0,error:serialized.1)
-                })
-            } else {
-                //error
-            }
+        var request = self.messageEndpoint.postRequest(message)
+        self.startDataTask(request, completionHandler: { (responseData, response, responseError) -> Void in
+            var result = self.messageEndpoint.messageFromResponse(responseData , response: response, error: responseError)
+            self.callbackQueue.addOperationWithBlock({ () -> Void in
+                completion(message: result.0, error: result.1)
+            })
         })
-        
-        dataTask.resume()
     }
     
-    func validate(response: NSHTTPURLResponse, responseData:NSData) -> NSError? {
-        let acceptableStatusCodes: Range<Int> = 200..<300
-        var acceptable = false
-        if response.statusCode > 199 && response.statusCode < 300 {
-            acceptable = true
-        }
-        
-        if(!acceptable) {
-            var userInfo : [NSObject:AnyObject]?
-            if let string = NSString(data: responseData, encoding: NSUTF8StringEncoding) {
-                userInfo = [NSLocalizedDescriptionKey:string]
-            }
-            return NSError(domain: errorDomain.chatsecurePush.rawValue, code: response.statusCode, userInfo: userInfo)
-        }
-        
-        return nil
-    }
     
-    func request(method: Method, endpoint: Endpoint, jsonDictionary:[String: AnyObject]?) -> (NSURLRequest, NSError?) {
-        var request = NSMutableURLRequest(URL: self.url(endpoint))
-        request.HTTPMethod = method.rawValue
+// MARK: Data Task
+    func startDataTask(request: NSMutableURLRequest, completionHandler: ((NSData!, NSURLResponse!, NSError!) -> Void)?)
+    {
         request.setValue("gzip;q=1.0,compress;q=0.5", forHTTPHeaderField: "Accept-Encoding")
         request.setValue("application/json", forHTTPHeaderField: "Accept")
         if let token = self.account?.token {
             request.setValue("Token "+token, forHTTPHeaderField:"Authorization")
         }
-        var error: NSError? = nil
-        if let json = jsonDictionary {
-            request.HTTPBody = NSJSONSerialization.dataWithJSONObject(json, options: NSJSONWritingOptions.allZeros, error: &error)
-            if request.HTTPBody?.length > 0 {
-                request.setValue("application/json", forHTTPHeaderField: "Content-Type")
-            }
-        }
         
-        return (request,error)
+        var dataTask = self.urlSession.dataTaskWithRequest(request, completionHandler: completionHandler)
+        dataTask.resume()
     }
-    
-    func url(endPoint: Endpoint) -> NSURL {
-        return self.baseUrl.URLByAppendingPathComponent(endPoint.rawValue+"/")
-    }
-    
 }

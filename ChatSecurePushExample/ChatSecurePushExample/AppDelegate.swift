@@ -64,7 +64,7 @@ class AppDelegate: UIResponder, UIApplicationDelegate {
     }
     
     func application(application: UIApplication, didReceiveRemoteNotification userInfo: [NSObject : AnyObject], fetchCompletionHandler completionHandler: (UIBackgroundFetchResult) -> Void) {
-        var message = Deserializer.messageFromDictionary(userInfo)
+        var message = Deserializer.messageFromPushDictionary(userInfo)
         println("userinfo: \(message?.token)")
         
         completionHandler(.NewData)

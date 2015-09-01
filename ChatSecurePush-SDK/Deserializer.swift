@@ -80,7 +80,7 @@ public class Deserializer {
         return (token, error)
     }
     
-    public class func messageFromDictionary(userInfo:[NSObject: AnyObject]) -> Message? {
+    public class func messageFromPushDictionary(userInfo:[NSObject: AnyObject]) -> Message? {
         if let aps = userInfo[jsonKeys.apsKey.rawValue] as? [String:AnyObject] {
             if let alert = aps[jsonKeys.alertKey.rawValue] as? [String:AnyObject] {
                 if let message = alert[jsonKeys.messageKey.rawValue] as? [String: AnyObject] {
@@ -94,11 +94,19 @@ public class Deserializer {
         return nil
     }
     
+    public class func messageFromServerDictionary(userInfo:[String: AnyObject]) -> Message? {
+        if let tokenString = userInfo[jsonKeys.token.rawValue] as? String {
+            var dataDictionary = userInfo[jsonKeys.dataKey.rawValue] as? [String: AnyObject];
+            return Message(token: tokenString, data: dataDictionary)
+        }
+        return nil
+    }
+    
     public class func message(data: NSData) -> (Message?, NSError?) {
         var error: NSError? = nil
         var message: Message? = nil
         if let json = NSJSONSerialization.JSONObjectWithData(data, options: NSJSONReadingOptions.allZeros, error: &error) as? [String: AnyObject] {
-            message = self.messageFromDictionary(json)
+            message = self.messageFromServerDictionary(json)
         }
         return (message, error)
     }
