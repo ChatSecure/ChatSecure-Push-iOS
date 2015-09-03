@@ -8,10 +8,10 @@
 
 import Foundation
 
-public enum DeviceKind {
-    case unkown
-    case iOS
-    case Android
+public enum DeviceKind:Int {
+    case unkown  = 0
+    case iOS     = 1
+    case Android = 2
 }
 
 public extension NSData {
@@ -37,14 +37,15 @@ public extension NSData {
     }
 }
 
-public class Device: NSObject {
+public class Device: NSObject, NSCoding, NSCopying {
     public var name: String?
     public var id: String?
     public var deviceID: String?
     public var registrationID: String
     public var active = true
+    public var deviceKind = DeviceKind.unkown
     public let dateCreated: NSDate
-    public let deviceKind = DeviceKind.unkown
+    
     
     
     public init (registrationID: String,dateCreated: NSDate, name: String?, deviceID: String?, id: String?) {
@@ -53,5 +54,48 @@ public class Device: NSObject {
         self.registrationID = registrationID
         self.deviceID = deviceID
         self.id = id
+    }
+    
+    public required init(coder aDecoder: NSCoder) {
+        self.name = aDecoder.decodeObjectForKey("name") as? String
+        self.id = aDecoder.decodeObjectForKey("id") as? String
+        self.deviceID = aDecoder.decodeObjectForKey("deviceID") as? String
+        if let registrationID = aDecoder.decodeObjectForKey("registrationID") as? String {
+            self.registrationID = registrationID
+        } else {
+            self.registrationID = ""
+        }
+        self.active = aDecoder.decodeBoolForKey("active")
+        if let date = aDecoder.decodeObjectForKey("dateCreated") as? NSDate {
+            self.dateCreated = date
+        } else {
+            self.dateCreated = NSDate()
+        }
+        if let deviceKindRawValue = aDecoder.decodeObjectForKey("deviceKind") as? Int {
+            if let deviceKind = DeviceKind(rawValue: deviceKindRawValue) {
+                self.deviceKind = deviceKind
+            } else {
+                self.deviceKind = .unkown
+            }
+        } else {
+            self.deviceKind = .unkown
+        }
+    }
+    
+    public func encodeWithCoder(aCoder: NSCoder) {
+        aCoder.encodeObject(self.name, forKey: "name")
+        aCoder.encodeObject(self.id, forKey: "id")
+        aCoder.encodeObject(self.deviceID, forKey: "deviceID")
+        aCoder.encodeObject(self.registrationID, forKey: "registrationID")
+        aCoder.encodeBool(self.active, forKey: "active")
+        aCoder.encodeObject(self.dateCreated, forKey: "dateCreated")
+        aCoder.encodeObject(self.deviceKind.rawValue, forKey: "deviceKind")
+    }
+    
+    public func copyWithZone(zone: NSZone) -> AnyObject {
+        var newDevice = Device(registrationID: self.registrationID, dateCreated: self.dateCreated, name: self.name, deviceID: self.deviceID, id: self.deviceID)
+        newDevice.active = self.active
+        newDevice.deviceKind = self.deviceKind
+        return newDevice
     }
 }
