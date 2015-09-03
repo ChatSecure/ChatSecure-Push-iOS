@@ -22,6 +22,14 @@ public class Serializer {
             }
         }
         
+        if let token = object as? Token {
+            json = [jsonKeys.token.rawValue: token.tokenString, jsonKeys.apnsDeviceKey.rawValue: token.registrationID]
+            
+            if let name = token.name {
+                json?.updateValue(name, forKey: jsonKeys.name.rawValue)
+            }
+        }
+        
         return json
         
     }

@@ -60,24 +60,46 @@ public class Deserializer {
         return (device, error)
     }
     
+    public class func token(jsonDictionary:[String:AnyObject]) -> Token? {
+        var token: Token? = nil
+        if let tokenString = jsonDictionary[jsonKeys.token.rawValue] as? String {
+            if let registrationId = jsonDictionary[jsonKeys.apnsDeviceKey.rawValue] as? String {
+                token = Token(tokenString: tokenString, deviceID: registrationId)
+            }
+            
+            if let registrationId = jsonDictionary[jsonKeys.gcmDeviceKey.rawValue] as? String {
+                token = Token(tokenString: tokenString, deviceID: registrationId)
+            }
+            
+            token?.name = jsonDictionary[jsonKeys.name.rawValue] as? String
+        }
+        
+        return token
+    }
+    
     public class func token(data: NSData) -> (Token?, NSError?) {
         var error: NSError? = nil
         var token: Token? = nil
         if let json = NSJSONSerialization.JSONObjectWithData(data, options: NSJSONReadingOptions.allZeros, error: &error) as? [String: AnyObject] {
-            if let tokenString = json[jsonKeys.token.rawValue] as? String {
-                if let registrationId = json[jsonKeys.apnsDeviceKey.rawValue] as? String {
-                    token = Token(tokenString: tokenString, deviceID: registrationId)
-                }
-                
-                if let registrationId = json[jsonKeys.gcmDeviceKey.rawValue] as? String {
-                    token = Token(tokenString: tokenString, deviceID: registrationId)
-                }
-                
-                token?.name = json[jsonKeys.name.rawValue] as? String
-            }
+            token = self.token(json)
         }
         
         return (token, error)
+    }
+    
+    public class func tokens(data: NSData) -> ([Token]?, NSError?) {
+        var error: NSError? = nil
+        var tokenArray : [Token] = []
+        if let json = NSJSONSerialization.JSONObjectWithData(data, options: NSJSONReadingOptions.allZeros, error: &error) as? [String: AnyObject] {
+            if let resultsArray = json[jsonKeys.results.rawValue] as? [[String: AnyObject]] {
+                for (_,dict) in enumerate(resultsArray) {
+                    if let token = self.token(dict) {
+                        tokenArray.append(token)
+                    }
+                }
+            }
+        }
+        return (tokenArray,error)
     }
     
     public class func messageFromPushDictionary(userInfo:[NSObject: AnyObject]) -> Message? {

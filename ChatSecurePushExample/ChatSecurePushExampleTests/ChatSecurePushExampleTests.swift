@@ -120,6 +120,23 @@ class ChatSecurePushExampleTests: XCTestCase {
         })
     }
     
+    func testGettingTokens() {
+        var client = self.defaultClient(authToken)
+        
+        var expectation = self.expectationWithDescription("Getting multiple tokens")
+        client.tokens(nil, completion: { (tokens, error) -> Void in
+            XCTAssertGreaterThan(tokens!.count, 0, "No tokens found")
+            XCTAssertNil(error, "Error \(error)")
+            expectation.fulfill()
+        })
+        
+        self.waitForExpectationsWithTimeout(20, handler: { (error) -> Void in
+            if error != nil {
+                println(error)
+            }
+        })
+    }
+    
     func testSendingMessage() {
         var client = self.defaultClient(authToken)
         

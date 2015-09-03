@@ -13,7 +13,7 @@ public class Token: NSObject {
     public let registrationID: String
     public var name: String?
     
-    init (tokenString: String, deviceID: String) {
+    public init (tokenString: String, deviceID: String) {
         self.tokenString = tokenString
         self.registrationID = deviceID
     }

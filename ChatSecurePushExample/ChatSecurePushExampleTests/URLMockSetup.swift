@@ -8,6 +8,7 @@
 
 import Foundation
 import URLMock
+import ChatSecure_Push_iOS
 
 let baseURl = NSURL(string: "http://push.chatsecure/api/1/")!
 let username = "test"
@@ -79,6 +80,43 @@ func setupURLMock() {
     
     tokenRequest.headers = postHeader
     //tokenRequest.checksHeadersWhenMatching = true
+    
+    var getSingleTokenRequest = UMKPatternMatchingMockRequest(URLPattern: tokenURL.absoluteString?.stringByAppendingString(":id"))
+    getSingleTokenRequest.HTTPMethods = NSSet(object: "GET") as Set<NSObject>
+    getSingleTokenRequest.responderGenerationBlock = {request, parameters in
+        
+        var data:NSData?
+        var json:[String:AnyObject]?
+        if let id = parameters["id"] as? String {
+            var t = Token.randomToken()
+            t = Token(tokenString: id, deviceID: t.registrationID)
+            json = Serializer.jsonValue(t)
+        } else {
+            var results: [[String:AnyObject]] = []
+            var count = 3
+            for index in 1...count {
+                var t = Token.randomToken()
+                if let json = Serializer.jsonValue(t) {
+                    results.append(json)
+                }
+            }
+            json = ["count": count, "results": results]
+            
+        }
+        
+        if let j = json {
+            data = NSJSONSerialization.dataWithJSONObject(j, options: NSJSONWritingOptions.allZeros, error: nil)
+        }
+        
+        return UMKMockHTTPResponder(statusCode: 200, body: data);
+    }
+    var allTokenRequest = UMKPatternMatchingMockRequest(URLPattern: tokenURL.absoluteString!)
+    allTokenRequest.HTTPMethods = getSingleTokenRequest.HTTPMethods
+    allTokenRequest.responderGenerationBlock = getSingleTokenRequest.responderGenerationBlock
+
+    
+    UMKMockURLProtocol.expectMockRequest(allTokenRequest)
+    UMKMockURLProtocol.expectMockRequest(getSingleTokenRequest)
     
     
     var messageURL = baseURl.URLByAppendingPathComponent("messages/")

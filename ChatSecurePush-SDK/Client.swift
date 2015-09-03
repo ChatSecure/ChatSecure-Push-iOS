@@ -43,6 +43,7 @@ public enum jsonKeys: String {
     case apsKey = "aps"
     case alertKey = "alert"
     case id = "id"
+    case results = "results"
 }
 
 public enum errorDomain: String {
@@ -106,6 +107,16 @@ public class Client: NSObject {
             var result = self.tokenEndpoint.tokenFromResponse(responseData , response: response, error: responseError)
             self.callbackQueue.addOperationWithBlock({ () -> Void in
                 completion(token: result.0, error: result.1)
+            })
+        })
+    }
+    
+    public func tokens(id:String?, completion:(tokens: [Token]?, error: NSError?) -> Void) {
+        var request = self.tokenEndpoint.getRequest(id)
+        self.startDataTask(request, completionHandler: { (responseData, response, responseError) -> Void in
+            var result = self.tokenEndpoint.tokensFromResponse(responseData , response: response, error: responseError)
+            self.callbackQueue.addOperationWithBlock({ () -> Void in
+                completion(tokens: result.0, error: result.1)
             })
         })
     }

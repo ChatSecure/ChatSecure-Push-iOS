@@ -20,6 +20,15 @@ class TokenEndpoint: APIEndpoint {
         return request
     }
     
+    func getRequest(id:String?) -> NSMutableURLRequest {
+        var request = self.request(.GET, endpoint: .Tokens, jsonDictionary: nil).0
+        if let tokenID = id {
+            request.URL = request.URL?.URLByAppendingPathComponent(tokenID)
+        }
+        
+        return request
+    }
+    
     func tokenFromResponse(responseData: NSData?, response: NSURLResponse?, error: NSError?) -> (Token?, NSError?) {
         var token: Token?
         var err = self.handleError(responseData, response: response, error: error)
@@ -34,5 +43,10 @@ class TokenEndpoint: APIEndpoint {
         }
         
         return (token,err)
+    }
+    
+    func tokensFromResponse(responseData: NSData?, response: NSURLResponse?, error: NSError?) -> ([Token]?, NSError?) {
+        var serialized = Deserializer.tokens(responseData!)
+        return serialized
     }
 }
