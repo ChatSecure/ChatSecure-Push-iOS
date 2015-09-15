@@ -52,6 +52,7 @@ public enum errorDomain: String {
 
 public enum errorStatusCode: NSInteger {
     case noData = 101
+    case badJSON = 102
 }
 
 public class Client: NSObject {
@@ -60,10 +61,10 @@ public class Client: NSObject {
     public var callbackQueue = NSOperationQueue()
     public var account: Account?
     
-    var appleDeviceEndpoint: APNSDeviceEndpoint
-    var accountEndpoint: AccountEnpoint
-    var tokenEndpoint: TokenEndpoint
-    var messageEndpoint: MessageEndpoint
+    private var appleDeviceEndpoint: APNSDeviceEndpoint
+    private var accountEndpoint: AccountEnpoint
+    private var tokenEndpoint: TokenEndpoint
+    private var messageEndpoint: MessageEndpoint
     
     public init (baseUrl: NSURL, urlSessionConfiguration: NSURLSessionConfiguration = NSURLSessionConfiguration.defaultSessionConfiguration(),account: Account?) {
         self.baseUrl = baseUrl
