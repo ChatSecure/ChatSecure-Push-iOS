@@ -27,7 +27,7 @@ class ChatSecurePushExampleTests: XCTestCase {
     }
     
     func defaultClient(authToken:String?) -> Client {
-        var configuration = NSURLSessionConfiguration.defaultSessionConfiguration()
+        let configuration = NSURLSessionConfiguration.defaultSessionConfiguration()
         configuration.protocolClasses = [UMKMockURLProtocol.self]
         
         var account :Account? = nil
@@ -36,26 +36,26 @@ class ChatSecurePushExampleTests: XCTestCase {
             account?.token = authToken
         }
         
-        var client = Client(baseUrl: baseURl, urlSessionConfiguration: configuration,account: account)
+        let client = Client(baseUrl: baseURl, urlSessionConfiguration: configuration,account: account)
         return client
     }
     
     func testCreatingClient() {
-        var client = self.defaultClient(nil)
-        var hasLength = count(client.baseUrl.absoluteString!) > 0
+        let client = self.defaultClient(nil)
+        let hasLength = (client.baseUrl.absoluteString).characters.count > 0
         XCTAssertTrue(hasLength, "No base url")
     }
     
     func testCreatingAccount() {
-        var client = self.defaultClient(nil)
-        var expectation = self.expectationWithDescription("Creating Account")
+        let client = self.defaultClient(nil)
+        let expectation = self.expectationWithDescription("Creating Account")
         
         client.registerNewUser(username, password: password, email: email) { (account, error) -> Void in
             
             
-            var correctUsername = account?.username == username
-            var correctEmail = account?.email == email
-            var correctToken = account?.token == authToken
+            let correctUsername = account?.username == username
+            let correctEmail = account?.email == email
+            let correctToken = account?.token == authToken
             
             XCTAssertNil(error, "Error creating account \(error)")
             XCTAssertTrue(correctUsername, "Incorrect username \(account?.username)")
@@ -67,19 +67,19 @@ class ChatSecurePushExampleTests: XCTestCase {
         
         self.waitForExpectationsWithTimeout(10, handler: { (error) -> Void in
             if( error != nil) {
-                println(error)
+                print(error)
             }
         })
     }
     
     func testCreatingDevice() {
-        var client = self.defaultClient(authToken)
+        let client = self.defaultClient(authToken)
         
-        var expectation = self.expectationWithDescription("Creating Device")
+        let expectation = self.expectationWithDescription("Creating Device")
         
         client.registerDevice(apnsToken, name: deviceName, deviceID: nil) { (device, error) -> Void in
-            var correctDeviceName = device?.name == deviceName
-            var correctAPNSToken = device?.registrationID == apnsToken
+            let correctDeviceName = device?.name == deviceName
+            let correctAPNSToken = device?.registrationID == apnsToken
             
             XCTAssertNil(error, "Error creating device \(error)")
             XCTAssertTrue(correctDeviceName, "Incorrect device name \(device?.name)")
@@ -90,20 +90,20 @@ class ChatSecurePushExampleTests: XCTestCase {
         
         self.waitForExpectationsWithTimeout(10, handler: { (error) -> Void in
             if( error != nil) {
-                println(error)
+                print(error)
             }
         })
     }
     
     func testCreatingToken() {
-        var client = self.defaultClient(authToken)
+        let client = self.defaultClient(authToken)
         
-        var expectation = self.expectationWithDescription("Creating Token")
+        let expectation = self.expectationWithDescription("Creating Token")
         
         client.createToken(apnsToken, name: tokenName) { (token, error) -> Void in
-            var correctDeviceName = token?.name == tokenName
-            var correctApnsToken = token?.registrationID == apnsToken
-            var correctToken = token?.tokenString == whitelistToken
+            let correctDeviceName = token?.name == tokenName
+            let correctApnsToken = token?.registrationID == apnsToken
+            let correctToken = token?.tokenString == whitelistToken
             
             XCTAssertNil(error, "Erro creating token: \(error)")
             XCTAssertTrue(correctDeviceName, "Incorrect device name \(token?.name)")
@@ -115,15 +115,15 @@ class ChatSecurePushExampleTests: XCTestCase {
         
         self.waitForExpectationsWithTimeout(10, handler: { (error) -> Void in
             if( error != nil) {
-                println(error)
+                print(error)
             }
         })
     }
     
     func testGettingTokens() {
-        var client = self.defaultClient(authToken)
+        let client = self.defaultClient(authToken)
         
-        var expectation = self.expectationWithDescription("Getting multiple tokens")
+        let expectation = self.expectationWithDescription("Getting multiple tokens")
         client.tokens(nil, completion: { (tokens, error) -> Void in
             XCTAssertGreaterThan(tokens!.count, 0, "No tokens found")
             XCTAssertNil(error, "Error \(error)")
@@ -132,25 +132,25 @@ class ChatSecurePushExampleTests: XCTestCase {
         
         self.waitForExpectationsWithTimeout(20, handler: { (error) -> Void in
             if error != nil {
-                println(error)
+                print(error)
             }
         })
     }
     
     func testSendingMessage() {
-        var client = self.defaultClient(authToken)
+        let client = self.defaultClient(authToken)
         
-        var expectation = self.expectationWithDescription("Sending Message")
+        let expectation = self.expectationWithDescription("Sending Message")
         let dict = [
             "key":["key":"value"],
             "Help":"Me"
         ]
         
-        var originalMessage = Message(token:"23", data:dict as? [String : AnyObject])
+        let originalMessage = Message(token:"23", data:dict)
         
         client.sendMessage(originalMessage) { (newMessage, error) -> Void in
             
-            var equalToken = originalMessage.token == newMessage?.token
+            let equalToken = originalMessage.token == newMessage?.token
             
             XCTAssertNil(error, "Error sending message \(error)")
             XCTAssertTrue(equalToken, "Token not equal")
@@ -160,14 +160,14 @@ class ChatSecurePushExampleTests: XCTestCase {
         
         self.waitForExpectationsWithTimeout(30, handler: { (error) -> Void in
             if error != nil {
-                println("Error: \(error)")
+                print("Error: \(error)")
             }
         })
     }
     
     func testAPNSResponse() {
-        var token = "09bd6d3cb017959eeec6cf031dbf7ad60f0a3bcd"
-        var dict : [String: AnyObject] = ["aps": [
+        let token = "09bd6d3cb017959eeec6cf031dbf7ad60f0a3bcd"
+        let dict : [String: AnyObject] = ["aps": [
             "alert": [
                 "message": [
                     "token": token
@@ -175,10 +175,12 @@ class ChatSecurePushExampleTests: XCTestCase {
             ],
             "content-available": 1
         ]]
-        
-        var message = Deserializer.messageFromPushDictionary(dict)
-        var equalToken = message?.token == token
-        XCTAssertTrue(equalToken, "Not equal token")
-        
+        do {
+           let message = try Deserializer.messageFromPushDictionary(dict)
+            let equalToken = message.token == token
+            XCTAssertTrue(equalToken, "Not equal token")
+        } catch let error {
+            XCTAssertNil(error)
+        }
     }
 }

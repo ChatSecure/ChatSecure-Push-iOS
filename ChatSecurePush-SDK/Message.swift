@@ -20,7 +20,7 @@ public class Message: NSObject, NSCoding, NSCopying {
         self.data = data
     }
     
-    public required init(coder aDecoder: NSCoder) {
+    public required init?(coder aDecoder: NSCoder) {
         if let token = aDecoder.decodeObjectForKey("token") as? String {
             self.token = token
         } else {

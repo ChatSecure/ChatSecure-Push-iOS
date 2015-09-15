@@ -23,7 +23,7 @@ class AppDelegate: UIResponder, UIApplicationDelegate {
 
     func application(application: UIApplication, didFinishLaunchingWithOptions launchOptions: [NSObject: AnyObject]?) -> Bool {
         
-        var settings = UIUserNotificationSettings(forTypes: (UIUserNotificationType.Badge | UIUserNotificationType.Sound | UIUserNotificationType.Alert), categories: nil)
+        let settings = UIUserNotificationSettings(forTypes: ([UIUserNotificationType.Badge, UIUserNotificationType.Sound, UIUserNotificationType.Alert]), categories: nil)
         application.registerUserNotificationSettings(settings)
         return true
     }
@@ -60,12 +60,16 @@ class AppDelegate: UIResponder, UIApplicationDelegate {
     }
     
     func application(application: UIApplication, didFailToRegisterForRemoteNotificationsWithError error: NSError) {
-        println("Error: \(error)")
+        print("Error: \(error)", terminator: "")
     }
     
     func application(application: UIApplication, didReceiveRemoteNotification userInfo: [NSObject : AnyObject], fetchCompletionHandler completionHandler: (UIBackgroundFetchResult) -> Void) {
-        var message = Deserializer.messageFromPushDictionary(userInfo)
-        println("userinfo: \(message?.token)")
+        do {
+            let message = try Deserializer.messageFromPushDictionary(userInfo)
+            print("userinfo: \(message.token)")
+        } catch let errror as NSError{
+            print("Error handling mush message \(errror.localizedDescription)")
+        }
         
         completionHandler(.NewData)
     }

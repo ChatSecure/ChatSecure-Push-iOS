@@ -16,12 +16,12 @@ class TokenEndpoint: APIEndpoint {
         ]
         parameters[jsonKeys.name.rawValue] = name
         
-        var request = self.request(Method.POST, endpoint: Endpoint.Tokens, jsonDictionary: parameters).0
+        let request = self.request(Method.POST, endpoint: Endpoint.Tokens, jsonDictionary: parameters).0
         return request
     }
     
     func getRequest(id:String?) -> NSMutableURLRequest {
-        var request = self.request(.GET, endpoint: .Tokens, jsonDictionary: nil).0
+        let request = self.request(.GET, endpoint: .Tokens, jsonDictionary: nil).0
         if let tokenID = id {
             request.URL = request.URL?.URLByAppendingPathComponent(tokenID)
         }
@@ -29,24 +29,23 @@ class TokenEndpoint: APIEndpoint {
         return request
     }
     
-    func tokenFromResponse(responseData: NSData?, response: NSURLResponse?, error: NSError?) -> (Token?, NSError?) {
-        var token: Token?
-        var err = self.handleError(responseData, response: response, error: error)
-        if err != nil {
-            return (nil, err)
-        } else if let data = responseData {
-            var serialized = Deserializer.token(data)
-            token =  serialized.0
-            err = serialized.1
-        } else {
-            err = NSError(domain: errorDomain.chatsecurePush.rawValue, code: errorStatusCode.noData.rawValue, userInfo: nil)
+    func tokenFromResponse(responseData: NSData?, response: NSURLResponse?, error: NSError?) throws -> Token {
+        try self.handleError(responseData, response: response, error: error)
+        
+        guard let data = responseData else {
+            throw NSError(domain: errorDomain.chatsecurePush.rawValue, code: errorStatusCode.noData.rawValue, userInfo: nil)
         }
         
-        return (token,err)
+        return try Deserializer.token(data)
     }
     
-    func tokensFromResponse(responseData: NSData?, response: NSURLResponse?, error: NSError?) -> ([Token]?, NSError?) {
-        var serialized = Deserializer.tokens(responseData!)
-        return serialized
+    func tokensFromResponse(responseData: NSData?, response: NSURLResponse?, error: NSError?) throws -> [Token] {
+        try self.handleError(responseData, response: response, error: error)
+        
+        guard let data = responseData else {
+            throw NSError(domain: errorDomain.chatsecurePush.rawValue, code: errorStatusCode.noData.rawValue, userInfo: nil)
+        }
+        
+        return try Deserializer.tokens(data)
     }
 }

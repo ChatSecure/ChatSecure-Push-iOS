@@ -27,8 +27,11 @@ class ViewController: UIViewController, UITextFieldDelegate {
     
     override func prepareForSegue(segue: UIStoryboardSegue, sender: AnyObject?) {
         if let vc = segue.destinationViewController as? AccountDetailViewController {
-            vc.account = Account(username: self.usernameTextField.text)
-            vc.password = self.passwordTextField.text
+            if let username = self.usernameTextField.text {
+                vc.account = Account(username:username)
+                vc.password = self.passwordTextField.text
+            }
+            
         }
     }
 }

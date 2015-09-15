@@ -78,11 +78,18 @@ public class Client: NSObject {
 // MARK: User
     public func registerNewUser(username: String, password: String, email: String?, completion: (account: Account?,error: NSError?) -> Void) {
         
-        var request = self.accountEndpoint.postRequest(username , password: password, email: email)
+        let request = self.accountEndpoint.postRequest(username , password: password, email: email)
         self.startDataTask(request, completionHandler: { (data, response, error) -> Void in
-            var result = self.accountEndpoint.accountFromResponse(data, response: response, error: error)
+            var account:Account? = nil
+            var error:NSError? = nil
+            do {
+                account = try self.accountEndpoint.accountFromResponse(data, response: response, error: error)
+            } catch let err as NSError {
+                error = err
+            }
+            
             self.callbackQueue .addOperationWithBlock({ () -> Void in
-                completion(account: result.0,error: result.1)
+                completion(account: account,error: error)
             })
         })
     }
@@ -90,11 +97,19 @@ public class Client: NSObject {
 // MARK: Device
     public func registerDevice(APNSToken: String, name: String?, deviceID: String?, completion: (device: Device?, error: NSError?) -> Void) {
         
-        var request = self.appleDeviceEndpoint.postRequest(APNSToken, name: name, deviceID: deviceID)
+        let request = self.appleDeviceEndpoint.postRequest(APNSToken, name: name, deviceID: deviceID)
         self.startDataTask(request, completionHandler: { (responseData, response, responseError) -> Void in
-            var result = self.appleDeviceEndpoint.deviceFromResponse(responseData, response: response, error: responseError)
+            var device:Device? = nil
+            var error:NSError? = nil
+            do {
+                device = try self.appleDeviceEndpoint.deviceFromResponse(responseData, response: response, error: responseError)
+            } catch let err as NSError {
+                error = err
+            }
+            
+            
             self.callbackQueue.addOperationWithBlock({ () -> Void in
-                completion(device: result.0, error: result.1)
+                completion(device: device, error: error)
             })
         })
     }
@@ -102,39 +117,60 @@ public class Client: NSObject {
 // MARK: Token
     public func createToken(id:String ,name:String?, completion: (token: Token?, error: NSError?) -> Void ) {
         
-        var request = self.tokenEndpoint.postRequest(id , name: name)
+        let request = self.tokenEndpoint.postRequest(id , name: name)
         self.startDataTask(request, completionHandler: { (responseData, response, responseError) -> Void in
-            var result = self.tokenEndpoint.tokenFromResponse(responseData , response: response, error: responseError)
+            var token:Token? = nil
+            var error:NSError? = nil
+            do {
+                token = try self.tokenEndpoint.tokenFromResponse(responseData , response: response, error: responseError)
+            } catch let err as NSError {
+                error = err
+            }
+            
             self.callbackQueue.addOperationWithBlock({ () -> Void in
-                completion(token: result.0, error: result.1)
+                completion(token: token, error: error)
             })
         })
     }
     
     public func tokens(id:String?, completion:(tokens: [Token]?, error: NSError?) -> Void) {
-        var request = self.tokenEndpoint.getRequest(id)
+        let request = self.tokenEndpoint.getRequest(id)
         self.startDataTask(request, completionHandler: { (responseData, response, responseError) -> Void in
-            var result = self.tokenEndpoint.tokensFromResponse(responseData , response: response, error: responseError)
+            var tokens:[Token]? = nil
+            var error:NSError? = nil
+            do {
+                tokens = try self.tokenEndpoint.tokensFromResponse(responseData , response: response, error: responseError)
+            } catch let err as NSError {
+                error = err
+            }
+            
             self.callbackQueue.addOperationWithBlock({ () -> Void in
-                completion(tokens: result.0, error: result.1)
+                completion(tokens: tokens, error: error)
             })
         })
     }
 
 // MARK: Message
     public func sendMessage(message:Message, completion: (message: Message?, error: NSError?) -> Void ) {
-        var request = self.messageEndpoint.postRequest(message)
+        let request = self.messageEndpoint.postRequest(message)
         self.startDataTask(request, completionHandler: { (responseData, response, responseError) -> Void in
-            var result = self.messageEndpoint.messageFromResponse(responseData , response: response, error: responseError)
+            var message:Message? = nil
+            var error:NSError? = nil
+            do {
+                message = try self.messageEndpoint.messageFromResponse(responseData , response: response, error: responseError)
+            } catch let err as NSError {
+                error = err
+            }
+            
             self.callbackQueue.addOperationWithBlock({ () -> Void in
-                completion(message: result.0, error: result.1)
+                completion(message: message, error: error)
             })
         })
     }
     
     
 // MARK: Data Task
-    func startDataTask(request: NSMutableURLRequest, completionHandler: ((NSData!, NSURLResponse!, NSError!) -> Void)?)
+    func startDataTask(request: NSMutableURLRequest, completionHandler: ((NSData?, NSURLResponse?, NSError?) -> Void))
     {
         request.setValue("gzip;q=1.0,compress;q=0.5", forHTTPHeaderField: "Accept-Encoding")
         request.setValue("application/json", forHTTPHeaderField: "Accept")
@@ -142,7 +178,7 @@ public class Client: NSObject {
             request.setValue("Token "+token, forHTTPHeaderField:"Authorization")
         }
         
-        var dataTask = self.urlSession.dataTaskWithRequest(request, completionHandler: completionHandler)
+        let dataTask = self.urlSession.dataTaskWithRequest(request, completionHandler: completionHandler)
         dataTask.resume()
     }
 }

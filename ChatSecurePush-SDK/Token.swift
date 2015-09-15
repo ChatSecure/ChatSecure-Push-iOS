@@ -41,7 +41,7 @@ public class Token: NSObject, NSCoding, NSCopying {
     }
     
     public func copyWithZone(zone: NSZone) -> AnyObject {
-        var newToken = Token(tokenString: self.tokenString, deviceID: self.registrationID)
+        let newToken = Token(tokenString: self.tokenString, deviceID: self.registrationID)
         newToken.name = self.name
         return newToken
     }

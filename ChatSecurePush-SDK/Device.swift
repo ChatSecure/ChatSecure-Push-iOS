@@ -26,7 +26,7 @@ public extension NSData {
             return (i > 9) ? (charA + i - 10) : (char0 + i)
         }
         
-        var p = UnsafeMutablePointer<UInt8>.alloc(length * 2)
+        let p = UnsafeMutablePointer<UInt8>.alloc(length * 2)
         
         for i in 0..<length {
             p[i*2] = itoh((buf[i] >> 4) & 0xF)
@@ -56,7 +56,7 @@ public class Device: NSObject, NSCoding, NSCopying {
         self.id = id
     }
     
-    public required init(coder aDecoder: NSCoder) {
+    public required init?(coder aDecoder: NSCoder) {
         self.name = aDecoder.decodeObjectForKey("name") as? String
         self.id = aDecoder.decodeObjectForKey("id") as? String
         self.deviceID = aDecoder.decodeObjectForKey("deviceID") as? String
@@ -93,7 +93,7 @@ public class Device: NSObject, NSCoding, NSCopying {
     }
     
     public func copyWithZone(zone: NSZone) -> AnyObject {
-        var newDevice = Device(registrationID: self.registrationID, dateCreated: self.dateCreated, name: self.name, deviceID: self.deviceID, id: self.deviceID)
+        let newDevice = Device(registrationID: self.registrationID, dateCreated: self.dateCreated, name: self.name, deviceID: self.deviceID, id: self.deviceID)
         newDevice.active = self.active
         newDevice.deviceKind = self.deviceKind
         return newDevice

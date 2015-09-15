@@ -52,22 +52,22 @@ class AccountDetailViewController: UIViewController {
     
     @IBAction func sendMessageButtonPressed(sender: AnyObject?) {
         if let token = self.messageTokenTextField?.text {
-            var message = Message(token: token, data: nil)
+            let message = Message(token: token, data: nil)
             self.client.sendMessage(message, completion: { (msg, error) -> Void in
-                println("Message: \(msg)")
+                print("Message: \(msg)")
             })
         }
         
     }
     
     @IBAction func whitelistTokenButtonPressed(sender: AnyObject?) {
-        if let apnsToken = (UIApplication.sharedApplication().delegate as? AppDelegate)?.apnsToken {
+        if let _ = (UIApplication.sharedApplication().delegate as? AppDelegate)?.apnsToken {
             if let id = self.device?.id {
                 self.client.createToken(id, name: "I'm just a test token", completion: { (token, error) -> Void in
                     if let tempToken = token {
-                        println("Token: \(token)")
+                        print("Token: \(token)")
                         dispatch_async(dispatch_get_main_queue(), { () -> Void in
-                            var activityVewController = UIActivityViewController(activityItems: [tempToken.tokenString], applicationActivities: nil)
+                            let activityVewController = UIActivityViewController(activityItems: [tempToken.tokenString], applicationActivities: nil)
                             self.presentViewController(activityVewController, animated: true, completion: nil)
                         })
                     }

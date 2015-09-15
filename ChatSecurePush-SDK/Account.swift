@@ -18,7 +18,7 @@ public class Account: NSObject, NSCoding, NSCopying {
         self.username = username
     }
     
-    public required init(coder aDecoder: NSCoder) {
+    public required init?(coder aDecoder: NSCoder) {
         if let username = aDecoder.decodeObjectForKey("username") as? String {
             self.username = username
         } else {
@@ -35,7 +35,7 @@ public class Account: NSObject, NSCoding, NSCopying {
     }
     
     public func copyWithZone(zone: NSZone) -> AnyObject {
-        var newAccount = Account(username: self.username)
+        let newAccount = Account(username: self.username)
         newAccount.token = self.token
         newAccount.email = self.email
         return newAccount

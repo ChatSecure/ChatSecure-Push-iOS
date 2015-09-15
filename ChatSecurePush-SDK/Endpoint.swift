@@ -18,12 +18,17 @@ class APIEndpoint {
     }
     
     func request(method: Method, endpoint: Endpoint, jsonDictionary:[String: AnyObject]?) -> (NSMutableURLRequest, NSError?) {
-        var request = NSMutableURLRequest(URL: self.url(endpoint))
+        let request = NSMutableURLRequest(URL: self.url(endpoint))
         request.HTTPMethod = method.rawValue
         
         var error: NSError? = nil
         if let json = jsonDictionary {
-            request.HTTPBody = NSJSONSerialization.dataWithJSONObject(json, options: NSJSONWritingOptions.allZeros, error: &error)
+            do {
+                request.HTTPBody = try NSJSONSerialization.dataWithJSONObject(json, options: NSJSONWritingOptions())
+            } catch let error1 as NSError {
+                error = error1
+                request.HTTPBody = nil
+            }
             if request.HTTPBody?.length > 0 {
                 request.setValue("application/json", forHTTPHeaderField: "Content-Type")
             }
@@ -36,22 +41,18 @@ class APIEndpoint {
         return self.baseURL.URLByAppendingPathComponent(endPoint.rawValue+"/")
     }
     
-    func handleError(data: NSData?, response: NSURLResponse?, error: NSError?) -> NSError?{
+    func handleError(data: NSData?, response: NSURLResponse?, error: NSError?) throws {
         
-        if error != nil {
-            return error
+        if let err = error {
+            throw err
         }
         
-        var err :NSError?;
         if let httpResponse = response as? NSHTTPURLResponse {
-            err = self.validate(httpResponse, responseData:data)
+            try self.validate(httpResponse, responseData:data)
         }
-        
-        return err
     }
     
-    func validate(response: NSHTTPURLResponse, responseData:NSData?) -> NSError? {
-        let acceptableStatusCodes: Range<Int> = 200..<300
+    func validate(response: NSHTTPURLResponse, responseData:NSData?) throws {
         var acceptable = false
         if response.statusCode > 199 && response.statusCode < 300 {
             acceptable = true
@@ -65,9 +66,7 @@ class APIEndpoint {
                 }
             }
             
-            return NSError(domain: errorDomain.chatsecurePush.rawValue, code: response.statusCode, userInfo: userInfo)
+            throw NSError(domain: errorDomain.chatsecurePush.rawValue, code: response.statusCode, userInfo: userInfo)
         }
-        
-        return nil
     }
 }
