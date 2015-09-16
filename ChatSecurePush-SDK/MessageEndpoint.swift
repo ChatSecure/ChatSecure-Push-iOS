@@ -14,7 +14,7 @@ class MessageEndpoint:APIEndpoint {
     
     func postRequest(message:Message) -> NSMutableURLRequest {
         let jsonDictionary = Serializer.jsonValue(message)
-        let request = self.request(.POST, endpoint: .Messages, jsonDictionary: jsonDictionary).0
+        let request = self.request(.POST, endpoint: Endpoint.Messages.rawValue, jsonDictionary: jsonDictionary).0
         return request
     }
     

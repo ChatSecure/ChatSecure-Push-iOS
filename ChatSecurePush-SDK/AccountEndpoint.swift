@@ -20,7 +20,7 @@ class AccountEnpoint: APIEndpoint {
         
         parameters[jsonKeys.email.rawValue] = email
         
-        let request = self.request(.POST, endpoint:.Accounts, jsonDictionary:parameters).0
+        let request = self.request(.POST, endpoint:Endpoint.Accounts.rawValue, jsonDictionary:parameters).0
         return request
     }
     

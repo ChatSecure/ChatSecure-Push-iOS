@@ -17,7 +17,7 @@ class APIEndpoint {
         self.baseURL = baseUrl
     }
     
-    func request(method: Method, endpoint: Endpoint, jsonDictionary:[String: AnyObject]?) -> (NSMutableURLRequest, NSError?) {
+    func request(method: Method, endpoint: String, jsonDictionary:[String: AnyObject]?) -> (NSMutableURLRequest, NSError?) {
         let request = NSMutableURLRequest(URL: self.url(endpoint))
         request.HTTPMethod = method.rawValue
         
@@ -37,8 +37,8 @@ class APIEndpoint {
         return (request,error)
     }
     
-    func url(endPoint: Endpoint) -> NSURL {
-        return self.baseURL.URLByAppendingPathComponent(endPoint.rawValue+"/")
+    func url(endPoint: String) -> NSURL {
+        return self.baseURL.URLByAppendingPathComponent(endPoint+"/")
     }
     
     func handleError(data: NSData?, response: NSURLResponse?, error: NSError?) throws {

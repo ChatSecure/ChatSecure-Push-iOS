@@ -10,7 +10,7 @@ import Foundation
 
 class APNSDeviceEndpoint: APIEndpoint {
     
-    func postRequest(APNSToken: String, name: String?, deviceID: String?) -> NSMutableURLRequest {
+    func postRequest(APNSToken: String, name: String?, deviceID: String?, serverID: String?) -> NSMutableURLRequest {
         var parameters = [
             jsonKeys.registrationID.rawValue: APNSToken,
         ]
@@ -18,12 +18,13 @@ class APNSDeviceEndpoint: APIEndpoint {
         parameters[jsonKeys.name.rawValue] = name
         parameters[jsonKeys.deviceID.rawValue] = deviceID
         
-        let request = self.request(Method.POST, endpoint: Endpoint.APNS, jsonDictionary: parameters).0
-        return request
-    }
-    
-    func get() {
+        var endpoint = Endpoint.APNS.rawValue
+        if let id = serverID {
+            endpoint = "\(endpoint)/\(id)"
+        }
         
+        let request = self.request(Method.POST, endpoint: endpoint, jsonDictionary: parameters).0
+        return request
     }
     
     func deviceFromResponse(responseData: NSData?, response: NSURLResponse?, error: NSError?) throws -> Device {
@@ -35,5 +36,4 @@ class APNSDeviceEndpoint: APIEndpoint {
         
         return try Deserializer.device(data, kind: .iOS)
     }
-    
 }

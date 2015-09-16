@@ -16,12 +16,12 @@ class TokenEndpoint: APIEndpoint {
         ]
         parameters[jsonKeys.name.rawValue] = name
         
-        let request = self.request(Method.POST, endpoint: Endpoint.Tokens, jsonDictionary: parameters).0
+        let request = self.request(Method.POST, endpoint: Endpoint.Tokens.rawValue, jsonDictionary: parameters).0
         return request
     }
     
     func getRequest(id:String?) -> NSMutableURLRequest {
-        let request = self.request(.GET, endpoint: .Tokens, jsonDictionary: nil).0
+        let request = self.request(.GET, endpoint: Endpoint.Tokens.rawValue, jsonDictionary: nil).0
         if let tokenID = id {
             request.URL = request.URL?.URLByAppendingPathComponent(tokenID)
         }
