@@ -10,10 +10,10 @@ import Foundation
 
 public class Token: NSObject, NSCoding, NSCopying {
     public let tokenString: String
-    public let registrationID: String
+    public var registrationID: String?
     public var name: String?
     
-    public init (tokenString: String, deviceID: String) {
+    public init (tokenString: String, deviceID: String?) {
         self.tokenString = tokenString
         self.registrationID = deviceID
     }
@@ -27,8 +27,6 @@ public class Token: NSObject, NSCoding, NSCopying {
         
         if let registrationID = aDecoder.decodeObjectForKey("registrationID") as? String {
             self.registrationID = registrationID
-        } else {
-            self.registrationID = ""
         }
         
         self.name = aDecoder.decodeObjectForKey("name") as? String
