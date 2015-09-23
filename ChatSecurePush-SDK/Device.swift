@@ -17,7 +17,7 @@ public enum DeviceKind:Int {
 public extension NSData {
     
     //http://stackoverflow.com/questions/7520615/how-to-convert-an-nsdata-into-an-nsstring-hex-string/7520655#7520655
-    var hexString : String {
+    public var hexString : String {
         let buf = UnsafePointer<UInt8>(bytes)
         let charA = UInt8(UnicodeScalar("a").value)
         let char0 = UInt8(UnicodeScalar("0").value)

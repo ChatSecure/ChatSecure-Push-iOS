@@ -98,12 +98,26 @@ public class Client: NSObject {
 // MARK: Device
     public func registerDevice(APNSToken: String, name: String?, deviceID: String?, completion: (device: Device?, error: NSError?) -> Void) {
         
-        self.updateDevice(nil, APNSToken: APNSToken, name: name, deviceID: deviceID, completion: completion)
+        let request = self.appleDeviceEndpoint.postRequest(APNSToken, name: name, deviceID: deviceID, serverID: nil)
+        self.startDataTask(request, completionHandler: { (responseData, response, responseError) -> Void in
+            var device:Device? = nil
+            var error:NSError? = nil
+            do {
+                device = try self.appleDeviceEndpoint.deviceFromResponse(responseData, response: response, error: responseError)
+            } catch let err as NSError {
+                error = err
+            }
+            
+            
+            self.callbackQueue.addOperationWithBlock({ () -> Void in
+                completion(device: device, error: error)
+            })
+        })
     }
     
     public func updateDevice(serverID: String?, APNSToken: String, name: String?, deviceID: String?, completion: (device: Device?, error: NSError?) -> Void) {
         
-        let request = self.appleDeviceEndpoint.postRequest(APNSToken, name: name, deviceID: deviceID, serverID: serverID)
+        let request = self.appleDeviceEndpoint.putRequest(APNSToken, name: name, deviceID: deviceID, serverID: serverID)
         self.startDataTask(request, completionHandler: { (responseData, response, responseError) -> Void in
             var device:Device? = nil
             var error:NSError? = nil

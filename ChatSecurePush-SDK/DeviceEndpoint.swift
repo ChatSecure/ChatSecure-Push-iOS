@@ -27,6 +27,12 @@ class APNSDeviceEndpoint: APIEndpoint {
         return request
     }
     
+    func putRequest(APNSToken: String, name: String?, deviceID: String?, serverID: String?) -> NSMutableURLRequest {
+        let request = self.postRequest(APNSToken, name: name, deviceID: deviceID, serverID: serverID)
+        request.HTTPMethod = Method.PUT.rawValue
+        return request
+    }
+    
     func deviceFromResponse(responseData: NSData?, response: NSURLResponse?, error: NSError?) throws -> Device {
         try self.handleError(responseData, response: response, error: error)
         
