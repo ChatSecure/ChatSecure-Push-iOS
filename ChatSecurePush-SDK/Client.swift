@@ -171,6 +171,10 @@ public class Client: NSObject {
     }
 
 // MARK: Message
+    public func messageEndpont() -> NSURL {
+        return self.baseUrl.URLByAppendingPathComponent(Endpoint.Messages.rawValue)
+    }
+    
     public func sendMessage(message:Message, completion: (message: Message?, error: NSError?) -> Void ) {
         let request = self.messageEndpoint.postRequest(message)
         self.startDataTask(request, completionHandler: { (responseData, response, responseError) -> Void in
