@@ -46,13 +46,14 @@ public enum jsonKeys: String {
     case results = "results"
 }
 
-public enum errorDomain: String {
-    case chatsecurePush = "chatsecure.push"
+public enum ErrorDomain: String {
+    case ChatsecurePush = "chatsecure.push"
 }
 
-public enum errorStatusCode: NSInteger {
-    case noData = 101
-    case badJSON = 102
+public enum ErrorStatusCode: NSInteger {
+    case NoData = 101
+    case BadJSON = 102
+    case NoTokenType = 103
 }
 
 public class Client: NSObject {
@@ -176,20 +177,26 @@ public class Client: NSObject {
     }
     
     public func sendMessage(message:Message, completion: (message: Message?, error: NSError?) -> Void ) {
-        let request = self.messageEndpoint.postRequest(message)
-        self.startDataTask(request, completionHandler: { (responseData, response, responseError) -> Void in
-            var message:Message? = nil
-            var error:NSError? = nil
-            do {
-                message = try self.messageEndpoint.messageFromResponse(responseData , response: response, error: responseError)
-            } catch let err as NSError {
-                error = err
-            }
-            
-            self.callbackQueue.addOperationWithBlock({ () -> Void in
-                completion(message: message, error: error)
+        do {
+            let request = try self.messageEndpoint.postRequest(message)
+            self.startDataTask(request, completionHandler: { (responseData, response, responseError) -> Void in
+                var message:Message? = nil
+                var error:NSError? = nil
+                do {
+                    message = try self.messageEndpoint.messageFromResponse(responseData , response: response, error: responseError)
+                } catch let err as NSError {
+                    error = err
+                }
+                
+                self.callbackQueue.addOperationWithBlock({ () -> Void in
+                    completion(message: message, error: error)
+                })
             })
-        })
+        } catch let error as NSError {
+            self.callbackQueue.addOperationWithBlock({ () -> Void in
+                completion(message: nil, error: error)
+            })
+        }
     }
     
     

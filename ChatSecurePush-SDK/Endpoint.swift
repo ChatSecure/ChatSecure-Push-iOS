@@ -66,7 +66,7 @@ class APIEndpoint {
                 }
             }
             
-            throw NSError(domain: errorDomain.chatsecurePush.rawValue, code: response.statusCode, userInfo: userInfo)
+            throw NSError(domain: ErrorDomain.ChatsecurePush.rawValue, code: response.statusCode, userInfo: userInfo)
         }
     }
 }

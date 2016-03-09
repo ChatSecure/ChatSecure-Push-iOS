@@ -10,7 +10,7 @@ import Foundation
 import UIKit
 import ChatSecure_Push_iOS
 
-let urlString = "http://10.11.41.112:8000/api/v1/"
+let urlString = "http://10.11.41.112:8001/api/v1/"
 
 class AccountDetailViewController: UIViewController {
     

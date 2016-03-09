@@ -89,14 +89,14 @@ func setupURLMock() {
         var json:[String:AnyObject]?
         if let id = parameters["id"] as? String {
             var t = Token.randomToken()
-            t = Token(tokenString: id, deviceID: t.registrationID)
-            json = Serializer.jsonValue(t)
+            t = Token(tokenString: id, type:t.type, deviceID: t.registrationID)
+            json = try! Serializer.jsonValue(t)
         } else {
             var results: [[String:AnyObject]] = []
             let count = 3
             for _ in 1...count {
                 let t = Token.randomToken()
-                if let json = Serializer.jsonValue(t) {
+                if let json = try! Serializer.jsonValue(t) {
                     results.append(json)
                 }
             }

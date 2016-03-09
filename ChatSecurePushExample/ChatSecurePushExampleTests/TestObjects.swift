@@ -15,6 +15,8 @@ func uuid() -> String {
 
 extension Token {
     class func randomToken() -> Token {
-        return Token(tokenString: uuid(), deviceID: uuid())
+        let kindInt = Int(arc4random_uniform(1) + 1)
+        let kind = DeviceKind(rawValue: kindInt) ?? DeviceKind.unknown
+        return Token(tokenString: uuid(), type: kind, deviceID: uuid())
     }
 }

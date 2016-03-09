@@ -12,10 +12,12 @@ public class Token: NSObject, NSCoding, NSCopying {
     public let tokenString: String
     public var registrationID: String?
     public var name: String?
+    public var type:DeviceKind = .unknown
     
-    public init (tokenString: String, deviceID: String?) {
+    public init (tokenString: String, type:DeviceKind, deviceID: String?) {
         self.tokenString = tokenString
         self.registrationID = deviceID
+        self.type = type
     }
     
     public required init(coder aDecoder: NSCoder) {
@@ -29,6 +31,10 @@ public class Token: NSObject, NSCoding, NSCopying {
             self.registrationID = registrationID
         }
         
+        if let type = DeviceKind(rawValue: aDecoder.decodeIntegerForKey("type")) {
+            self.type = type
+        }
+        
         self.name = aDecoder.decodeObjectForKey("name") as? String
     }
     
@@ -36,10 +42,11 @@ public class Token: NSObject, NSCoding, NSCopying {
         aCoder.encodeObject(self.tokenString, forKey: "tokenString")
         aCoder.encodeObject(self.registrationID, forKey: "registrationID")
         aCoder.encodeObject(self.name, forKey: "name")
+        aCoder.encodeInteger(self.type.rawValue, forKey: "type")
     }
     
     public func copyWithZone(zone: NSZone) -> AnyObject {
-        let newToken = Token(tokenString: self.tokenString, deviceID: self.registrationID)
+        let newToken = Token(tokenString: self.tokenString, type: self.type, deviceID: self.registrationID)
         newToken.name = self.name
         return newToken
     }

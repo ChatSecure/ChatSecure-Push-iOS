@@ -33,7 +33,7 @@ class TokenEndpoint: APIEndpoint {
         try self.handleError(responseData, response: response, error: error)
         
         guard let data = responseData else {
-            throw NSError(domain: errorDomain.chatsecurePush.rawValue, code: errorStatusCode.noData.rawValue, userInfo: nil)
+            throw NSError(domain: ErrorDomain.ChatsecurePush.rawValue, code: ErrorStatusCode.NoData.rawValue, userInfo: nil)
         }
         
         return try Deserializer.token(data)
@@ -43,7 +43,7 @@ class TokenEndpoint: APIEndpoint {
         try self.handleError(responseData, response: response, error: error)
         
         guard let data = responseData else {
-            throw NSError(domain: errorDomain.chatsecurePush.rawValue, code: errorStatusCode.noData.rawValue, userInfo: nil)
+            throw NSError(domain: ErrorDomain.ChatsecurePush.rawValue, code: ErrorStatusCode.NoData.rawValue, userInfo: nil)
         }
         
         return try Deserializer.tokens(data)

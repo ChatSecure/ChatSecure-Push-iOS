@@ -3,16 +3,16 @@
 
 use_frameworks!
 
-# target 'ChatSecurePushExample' do
-#
-# end
+def default_pod
+  pod 'ChatSecure-Push-iOS', :path => '../ChatSecure-Push-iOS.podspec'
+end
 
 target 'ChatSecurePushExample' do
-  pod 'ChatSecure-Push-iOS', :path => '../ChatSecure-Push-iOS.podspec'
+  default_pod
 end
 
 target 'ChatSecurePushExampleTests' do
   platform :ios, '8.0'
-  pod 'ChatSecure-Push-iOS', :path => '../ChatSecure-Push-iOS.podspec'
-  pod 'URLMock', '~> 1.2.3'
+  default_pod
+  pod 'URLMock', '~> 1.3'
 end

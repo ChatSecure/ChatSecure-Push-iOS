@@ -9,14 +9,14 @@
 import Foundation
 
 public enum DeviceKind:Int {
-    case unkown  = 0
+    case unknown  = 0
     case iOS     = 1
     case Android = 2
 }
 
 public extension NSData {
     
-    //http://stackoverflow.com/questions/7520615/how-to-convert-an-nsdata-into-an-nsstring-hex-string/7520655#7520655
+    ///http://stackoverflow.com/questions/7520615/how-to-convert-an-nsdata-into-an-nsstring-hex-string/7520655#7520655
     public var hexString : String {
         let buf = UnsafePointer<UInt8>(bytes)
         let charA = UInt8(UnicodeScalar("a").value)
@@ -43,7 +43,7 @@ public class Device: NSObject, NSCoding, NSCopying {
     public var deviceID: String?
     public var registrationID: String
     public var active = true
-    public var deviceKind = DeviceKind.unkown
+    public var deviceKind = DeviceKind.unknown
     public let dateCreated: NSDate
     
     
@@ -75,10 +75,10 @@ public class Device: NSObject, NSCoding, NSCopying {
             if let deviceKind = DeviceKind(rawValue: deviceKindRawValue) {
                 self.deviceKind = deviceKind
             } else {
-                self.deviceKind = .unkown
+                self.deviceKind = .unknown
             }
         } else {
-            self.deviceKind = .unkown
+            self.deviceKind = .unknown
         }
     }
     
