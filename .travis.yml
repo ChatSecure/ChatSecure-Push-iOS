@@ -5,3 +5,6 @@ cache: cocoapods
 podfile: ./ChatSecurePushExample/Podfile
 xcode_workspace: ./ChatSecurePushExample/ChatSecurePushExample.xcworkspace
 xcode_scheme: ChatSecurePushExample
+xcode_sdk:
+  - iphonesimulator9.2
+  - iphonesimulator8.4
