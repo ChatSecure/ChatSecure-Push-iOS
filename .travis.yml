@@ -1,0 +1,7 @@
+language: objective-c
+osx_image: xcode7.2
+cache: cocoapods
+
+podfile: ./ChatSecurePushExample/Podfile
+xcode_workspace: ./ChatSecurePushExample/ChatSecurePushExample.xcworkspace
+xcode_scheme: ChatSecurePushExample
