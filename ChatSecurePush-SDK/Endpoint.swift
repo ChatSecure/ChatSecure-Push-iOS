@@ -17,24 +17,9 @@ class APIEndpoint {
         self.baseURL = baseUrl
     }
     
-    func request(method: Method, endpoint: String, jsonDictionary:[String: AnyObject]?) -> (NSMutableURLRequest, NSError?) {
-        let request = NSMutableURLRequest(URL: self.url(endpoint))
-        request.HTTPMethod = method.rawValue
+    func request(method: Method, endpoint: String, jsonDictionary:[String: AnyObject]?) throws -> NSMutableURLRequest {
         
-        var error: NSError? = nil
-        if let json = jsonDictionary {
-            do {
-                request.HTTPBody = try NSJSONSerialization.dataWithJSONObject(json, options: NSJSONWritingOptions())
-            } catch let error1 as NSError {
-                error = error1
-                request.HTTPBody = nil
-            }
-            if request.HTTPBody?.length > 0 {
-                request.setValue("application/json", forHTTPHeaderField: "Content-Type")
-            }
-        }
-        
-        return (request,error)
+        return try APIEndpoint.request(method.rawValue, URL: self.url(endpoint), jsonDictionary: jsonDictionary)
     }
     
     func url(endPoint: String) -> NSURL {
@@ -68,5 +53,20 @@ class APIEndpoint {
             
             throw NSError(domain: ErrorDomain.ChatsecurePush.rawValue, code: response.statusCode, userInfo: userInfo)
         }
+    }
+    
+    class func request(method: String, URL:NSURL, jsonDictionary:[String:AnyObject]?) throws -> NSMutableURLRequest {
+        let request = NSMutableURLRequest(URL: URL)
+        request.HTTPMethod = method
+        
+        if let json = jsonDictionary {
+            request.HTTPBody = try NSJSONSerialization.dataWithJSONObject(json, options: NSJSONWritingOptions())
+            
+            if request.HTTPBody?.length > 0 {
+                request.setValue("application/json", forHTTPHeaderField: "Content-Type")
+            }
+        }
+        
+        return request
     }
 }

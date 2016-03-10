@@ -11,7 +11,7 @@ import Foundation
 
 class AccountEnpoint: APIEndpoint {
     
-    func postRequest(username: String, password: String, email: String?) -> NSMutableURLRequest {
+    func postRequest(username: String, password: String, email: String?) throws -> NSMutableURLRequest {
         
         var parameters = [
             jsonKeys.username.rawValue : username,
@@ -20,8 +20,7 @@ class AccountEnpoint: APIEndpoint {
         
         parameters[jsonKeys.email.rawValue] = email
         
-        let request = self.request(.POST, endpoint:Endpoint.Accounts.rawValue, jsonDictionary:parameters).0
-        return request
+        return try self.request(.POST, endpoint:Endpoint.Accounts.rawValue, jsonDictionary:parameters)
     }
     
     func accountFromResponse(responseData: NSData?, response: NSURLResponse?, error: NSError?) throws -> Account {

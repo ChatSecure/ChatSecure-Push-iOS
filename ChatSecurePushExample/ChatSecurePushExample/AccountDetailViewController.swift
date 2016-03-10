@@ -52,7 +52,7 @@ class AccountDetailViewController: UIViewController {
     
     @IBAction func sendMessageButtonPressed(sender: AnyObject?) {
         if let token = self.messageTokenTextField?.text {
-            let message = Message(token: token, data: nil)
+            let message = Message(token: token, url:nil, data: nil)
             self.client.sendMessage(message, completion: { (msg, error) -> Void in
                 print("Message: \(msg)")
             })

@@ -11,6 +11,7 @@ import URLMock
 import ChatSecure_Push_iOS
 
 let baseURl = NSURL(string: "http://push.chatsecure/api/1/")!
+let otherMessageURL = NSURL(string: "http://example.com/api/1/messages/")!
 let username = "test"
 let password = "password"
 let email = "email@email.com"
@@ -133,6 +134,10 @@ func setupURLMock() {
         return UMKMockHTTPResponder(statusCode: 200, body: request.umk_HTTPBodyData());
     }
     request.responderGenerationBlock = block
-    UMKMockURLProtocol.expectMockRequest(request);
+    UMKMockURLProtocol.expectMockRequest(request)
+    
+    let otherServerRequest = UMKPatternMatchingMockRequest(URLPattern: otherMessageURL.absoluteString)
+    otherServerRequest.responderGenerationBlock = block
+    UMKMockURLProtocol.expectMockRequest(otherServerRequest)
 }
 

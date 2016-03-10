@@ -10,18 +10,18 @@ import Foundation
 
 
 class TokenEndpoint: APIEndpoint {
-    func postRequest(id:String ,name:String?) -> NSMutableURLRequest {
+    func postRequest(id:String ,name:String?) throws -> NSMutableURLRequest {
         var parameters = [
             jsonKeys.apnsDeviceKey.rawValue: id
         ]
         parameters[jsonKeys.name.rawValue] = name
         
-        let request = self.request(Method.POST, endpoint: Endpoint.Tokens.rawValue, jsonDictionary: parameters).0
+        let request = try self.request(Method.POST, endpoint: Endpoint.Tokens.rawValue, jsonDictionary: parameters)
         return request
     }
     
-    func getRequest(id:String?) -> NSMutableURLRequest {
-        let request = self.request(.GET, endpoint: Endpoint.Tokens.rawValue, jsonDictionary: nil).0
+    func getRequest(id:String?) throws -> NSMutableURLRequest {
+        let request = try self.request(.GET, endpoint: Endpoint.Tokens.rawValue, jsonDictionary: nil)
         if let tokenID = id {
             request.URL = request.URL?.URLByAppendingPathComponent(tokenID)
         }

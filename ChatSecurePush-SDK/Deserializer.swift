@@ -130,23 +130,23 @@ public class Deserializer {
         }
         
         let dataDictionary = message[jsonKeys.dataKey.rawValue] as? [String: AnyObject];
-        return Message(token: tokenString, data: dataDictionary)
+        return Message(token: tokenString, url:nil, data: dataDictionary)
     }
     
-    public class func messageFromServerDictionary(userInfo:[String: AnyObject]) throws -> Message {
+    public class func messageFromServerDictionary(userInfo:[String: AnyObject], url:NSURL) throws -> Message {
         guard let tokenString = userInfo[jsonKeys.token.rawValue] as? String else {
             throw NSError(domain: ErrorDomain.ChatsecurePush.rawValue, code: ErrorStatusCode.BadJSON.rawValue, userInfo: [NSLocalizedDescriptionKey:"JSON missing token string"])
         }
         
         let dataDictionary = userInfo[jsonKeys.dataKey.rawValue] as? [String: AnyObject];
-        return Message(token: tokenString, data: dataDictionary)
+        return Message(token: tokenString, url:url, data: dataDictionary)
     }
     
-    public class func message(data: NSData) throws -> Message {
+    public class func message(data: NSData, url:NSURL) throws -> Message {
   
         guard let json = try NSJSONSerialization.JSONObjectWithData(data, options: NSJSONReadingOptions()) as? [String: AnyObject] else {
             throw NSError(domain: ErrorDomain.ChatsecurePush.rawValue, code: ErrorStatusCode.BadJSON.rawValue, userInfo: [NSLocalizedDescriptionKey:"Unable to deserialize JSON as String:AnyObject"])
         }
-        return try self.messageFromServerDictionary(json)
+        return try self.messageFromServerDictionary(json, url: url)
     }
 }

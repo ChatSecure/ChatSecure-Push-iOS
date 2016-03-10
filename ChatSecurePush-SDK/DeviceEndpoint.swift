@@ -10,7 +10,7 @@ import Foundation
 
 class APNSDeviceEndpoint: APIEndpoint {
     
-    func postRequest(APNSToken: String, name: String?, deviceID: String?, serverID: String?) -> NSMutableURLRequest {
+    func postRequest(APNSToken: String, name: String?, deviceID: String?, serverID: String?) throws -> NSMutableURLRequest {
         var parameters = [
             jsonKeys.registrationID.rawValue: APNSToken,
         ]
@@ -23,12 +23,11 @@ class APNSDeviceEndpoint: APIEndpoint {
             endpoint = "\(endpoint)/\(id)"
         }
         
-        let request = self.request(Method.POST, endpoint: endpoint, jsonDictionary: parameters).0
-        return request
+        return try self.request(Method.POST, endpoint: endpoint, jsonDictionary: parameters)
     }
     
-    func putRequest(APNSToken: String, name: String?, deviceID: String?, serverID: String?) -> NSMutableURLRequest {
-        let request = self.postRequest(APNSToken, name: name, deviceID: deviceID, serverID: serverID)
+    func putRequest(APNSToken: String, name: String?, deviceID: String?, serverID: String?) throws -> NSMutableURLRequest {
+        let request = try self.postRequest(APNSToken, name: name, deviceID: deviceID, serverID: serverID)
         request.HTTPMethod = Method.PUT.rawValue
         return request
     }

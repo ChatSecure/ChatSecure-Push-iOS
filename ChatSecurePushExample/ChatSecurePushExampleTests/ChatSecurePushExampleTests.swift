@@ -146,7 +146,7 @@ class ChatSecurePushExampleTests: XCTestCase {
             "Help":"Me"
         ]
         
-        let originalMessage = Message(token:"23", data:dict)
+        let originalMessage = Message(token:"23", url:nil, data:dict)
         
         client.sendMessage(originalMessage) { (newMessage, error) -> Void in
             
@@ -163,6 +163,29 @@ class ChatSecurePushExampleTests: XCTestCase {
                 print("Error: \(error)")
             }
         })
+    }
+    
+    /// Test sending messages that have a url
+    func testSendingMessageOtherServer() {
+        let client = self.defaultClient(authToken)
+        
+        let expectation = self.expectationWithDescription("Sending Message to other server")
+        let dict = [
+            "key":["key":"value"],
+            "Help":"Me"
+        ]
+        
+        let origMessage = Message(token: "111", url: otherMessageURL, data: dict)
+        client.sendMessage(origMessage) { (message, error) -> Void in
+         
+            expectation.fulfill()
+        }
+        
+        self.waitForExpectationsWithTimeout(30) { (error) -> Void in
+            if error != nil {
+                print("Error: \(error)")
+            }
+        }
     }
     
     func testAPNSResponse() {
