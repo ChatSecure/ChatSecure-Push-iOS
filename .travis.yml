@@ -1,10 +1,8 @@
 language: objective-c
 osx_image: xcode7.2
+xcode_sdk: iphonesimulator9.2
 cache: cocoapods
 
 podfile: ./ChatSecurePushExample/Podfile
 xcode_workspace: ./ChatSecurePushExample/ChatSecurePushExample.xcworkspace
 xcode_scheme: ChatSecurePushExample
-xcode_sdk:
-  - iphonesimulator9.2
-  - iphonesimulator8.4
