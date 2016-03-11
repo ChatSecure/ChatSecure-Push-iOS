@@ -257,7 +257,7 @@ public class Client: NSObject {
 // MARK: Message
     /// The url for the message endpoint for this client
     public func messageEndpont() -> NSURL {
-        return self.baseUrl.URLByAppendingPathComponent(Endpoint.Messages.rawValue)
+        return self.baseUrl.URLByAppendingPathComponent("\(Endpoint.Messages.rawValue)/")
     }
     /**
      Sends a message object to initiate a push. If the message does not have a url then it will be sent to this client's message endpoint otherwise that url is used.
