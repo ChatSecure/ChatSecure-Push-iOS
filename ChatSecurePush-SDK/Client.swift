@@ -1,4 +1,4 @@
-//
+ //
 //  Client.swift
 //  Pods
 //
@@ -61,6 +61,7 @@ public class Client: NSObject {
     private var accountEndpoint: AccountEnpoint
     private var tokenEndpoint: TokenEndpoint
     private var messageEndpoint: MessageEndpoint
+    private let urlSessionDelegate = URLSessionDelegate()
     
     
     /**
@@ -75,7 +76,7 @@ public class Client: NSObject {
      */
     public init(baseUrl: NSURL, urlSessionConfiguration: NSURLSessionConfiguration = NSURLSessionConfiguration.defaultSessionConfiguration(),account: Account?) {
         self.baseUrl = baseUrl
-        self.urlSession = NSURLSession(configuration: urlSessionConfiguration)
+        self.urlSession = NSURLSession(configuration: urlSessionConfiguration, delegate: urlSessionDelegate, delegateQueue: nil)
         self.account = account
         self.appleDeviceEndpoint = APNSDeviceEndpoint(baseUrl: self.baseUrl)
         self.accountEndpoint = AccountEnpoint(baseUrl: self.baseUrl)
@@ -299,7 +300,6 @@ public class Client: NSObject {
         if let token = self.account?.token where authenticate {
             request.setValue("Token "+token, forHTTPHeaderField:"Authorization")
         }
-        
         let dataTask = self.urlSession.dataTaskWithRequest(request, completionHandler: completionHandler)
         dataTask.resume()
     }
