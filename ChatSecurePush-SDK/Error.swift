@@ -15,11 +15,11 @@ public enum ErrorDomain: String {
 
 ///Enum of all the status codes used in the SDK for erros
 public enum ErrorStatusCode: NSInteger {
-    case NoData = 101
-    case BadJSON = 102
-    case NoTokenType = 103
-    case MissingURL = 104
-    case CreatingRequest = 105
+    case NoData = 601
+    case BadJSON = 602
+    case NoTokenType = 603
+    case MissingURL = 604
+    case CreatingRequest = 605
 }
 
 extension NSError {

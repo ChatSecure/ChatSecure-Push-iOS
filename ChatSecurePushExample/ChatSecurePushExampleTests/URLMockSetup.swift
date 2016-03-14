@@ -21,6 +21,7 @@ let dateCreatedSring = "2015-07-07T22:59:33.909289Z"
 let deviceName = "Great big iPad"
 let tokenName = "This awesome token"
 let whitelistToken = "e6a73da924cfcf41d4a422e115e65d6f3e64fe3d"
+let errorToken = "errorToken"
 
 func setupURLMock() {
     
@@ -130,8 +131,18 @@ func setupURLMock() {
     let request = UMKPatternMatchingMockRequest(URLPattern: messageURL.absoluteString)
     let block: (NSURLRequest!, [NSObject : AnyObject]!) -> UMKMockURLResponder! = {request, parameters in
         
-        //Return post data back to client
-        return UMKMockHTTPResponder(statusCode: 200, body: request.umk_HTTPBodyData());
+        let data = request.umk_HTTPBodyData()
+        let jsonDict = try! NSJSONSerialization.JSONObjectWithData(data, options: NSJSONReadingOptions()) as! [String : AnyObject]
+        let message = try! Deserializer.messageFromServerDictionary(jsonDict, url: request.URL!)
+        
+        if (message.token == errorToken) {
+            return UMKMockHTTPResponder(statusCode: 404)
+        } else {
+            //Return post data back to client
+            return UMKMockHTTPResponder(statusCode: 200, body: request.umk_HTTPBodyData());
+        }
+        
+        
     }
     request.responderGenerationBlock = block
     UMKMockURLProtocol.expectMockRequest(request)

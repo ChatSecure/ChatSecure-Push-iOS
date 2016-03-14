@@ -165,6 +165,27 @@ class ChatSecurePushExampleTests: XCTestCase {
         })
     }
     
+    /// Teset 404 message response. Token was revoked case
+    func testErrorSendingMessage() {
+        let client = self.defaultClient(authToken)
+        
+        let expectation = self.expectationWithDescription("Error Sending Message")
+        
+        let message = Message(token: errorToken, url: nil, data: nil)
+        
+        client.sendMessage(message) { (message, error) -> Void in
+            XCTAssertNil(message)
+            XCTAssertNotNil(error)
+            expectation.fulfill()
+        }
+        
+        self.waitForExpectationsWithTimeout(30) { (err) -> Void in
+            if (err != nil) {
+                print("\(err)")
+            }
+        }
+    }
+    
     /// Test sending messages that have a url
     func testSendingMessageOtherServer() {
         let client = self.defaultClient(authToken)

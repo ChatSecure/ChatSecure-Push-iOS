@@ -46,7 +46,13 @@ public enum jsonKeys: String {
     case results = "results"
 }
 
-/// An API client that performs calls to the [ChatSecure-Push-Server](https://github.com/chatsecure/chatsecure-push-server)
+/** 
+ An API client that performs calls to the [ChatSecure-Push-Server](https://github.com/chatsecure/chatsecure-push-server)
+ 
+ Errors
+  - The methods that involve network operations will return the HTTP status code in the range 100...500
+  - Internal errors or non network errors will be in the 600 and greater range and are documented in Error.swift
+*/
 public class Client: NSObject {
     /// The API URL in the format in the format `https://example.com/api/v1/`
     public let baseUrl: NSURL
