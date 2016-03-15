@@ -84,8 +84,13 @@ func setupURLMock() {
     //tokenRequest.checksHeadersWhenMatching = true
     
     let getSingleTokenRequest = UMKPatternMatchingMockRequest(URLPattern: tokenURL.absoluteString.stringByAppendingString(":id"))
-    getSingleTokenRequest.HTTPMethods = NSSet(object: "GET") as Set<NSObject>
+    
+    getSingleTokenRequest.HTTPMethods = NSSet(array: ["GET","DELETE"]) as Set<NSObject>
     getSingleTokenRequest.responderGenerationBlock = {request, parameters in
+        
+        if (request.HTTPMethod == "DELETE") {
+            return UMKMockHTTPResponder(statusCode: 204, body: nil);
+        }
         
         var data:NSData?
         var json:[String:AnyObject]?
@@ -124,7 +129,6 @@ func setupURLMock() {
     
     UMKMockURLProtocol.expectMockRequest(allTokenRequest)
     UMKMockURLProtocol.expectMockRequest(getSingleTokenRequest)
-    
     
     let messageURL = baseURl.URLByAppendingPathComponent("messages/")
     

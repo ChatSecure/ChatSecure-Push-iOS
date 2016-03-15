@@ -260,6 +260,28 @@ public class Client: NSObject {
         }
         
     }
+    
+    /**
+     Delete a token from the remote server. This makes it impossible for this token to send push messages.
+     
+     - Parameters:
+        - id: The token string, e.g. 852e1c575a8f86b9198d4c13ecccac3634873859
+        - completion: The closure called on completion and any error if encountered.
+     */
+    public func revokeToken(id:String, completion:(error: NSError?) -> Void) {
+        do {
+            let reqeust = try self.tokenEndpoint.deleteRequest(id)
+            self.startDataTask(reqeust, authenticate: true, completionHandler: { [weak self] (data, response, error) -> Void in
+                self?.callbackQueue.addOperationWithBlock({ () -> Void in
+                    completion(error: error)
+                })
+            })
+        } catch let error as NSError {
+            self.callbackQueue.addOperationWithBlock({ () -> Void in
+                completion(error: error)
+            })
+        }
+    }
 
 // MARK: Message
     /// The url for the message endpoint for this client

@@ -137,6 +137,21 @@ class ChatSecurePushExampleTests: XCTestCase {
         })
     }
     
+    /// Test deleting tokens
+    func testDeletingToken() {
+        let client = self.defaultClient(authToken)
+        
+        let expectation = self.expectationWithDescription("Deleting token")
+        client.revokeToken("tokenID") { (error) -> Void in
+            XCTAssertNil(error)
+            expectation.fulfill()
+        }
+        
+        self.waitForExpectationsWithTimeout(30) { (err) -> Void in
+            
+        }
+    }
+    
     func testSendingMessage() {
         let client = self.defaultClient(authToken)
         

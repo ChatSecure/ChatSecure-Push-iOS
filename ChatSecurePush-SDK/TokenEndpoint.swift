@@ -29,6 +29,12 @@ class TokenEndpoint: APIEndpoint {
         return request
     }
     
+    func deleteRequest(id:String) throws -> NSMutableURLRequest {
+        let request = try self.request(.DELETE, endpoint: Endpoint.Tokens.rawValue, jsonDictionary: nil)
+        request.URL = request.URL?.URLByAppendingPathComponent("\(id)/")
+        return request
+    }
+    
     func tokenFromResponse(responseData: NSData?, response: NSURLResponse?, error: NSError?) throws -> Token {
         try self.handleError(responseData, response: response, error: error)
         
