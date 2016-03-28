@@ -271,7 +271,7 @@ public class Client: NSObject {
     public func revokeToken(id:String, completion:(error: NSError?) -> Void) {
         do {
             let reqeust = try self.tokenEndpoint.deleteRequest(id)
-            self.startDataTask(reqeust, authenticate: true, completionHandler: { [weak self] (data, response, error) -> Void in
+            self.startDataTask(reqeust, completionHandler: { [weak self] (data, response, error) -> Void in
                 self?.callbackQueue.addOperationWithBlock({ () -> Void in
                     completion(error: error)
                 })
@@ -321,7 +321,15 @@ public class Client: NSObject {
     
     
 // MARK: Data Task
-    func startDataTask(request: NSMutableURLRequest, authenticate:Bool = false, completionHandler: ((NSData?, NSURLResponse?, NSError?) -> Void))
+    /**
+     Default way of starting a data task for all network calls.
+     
+     - Parameters:
+        - request: the mutable url request to use. This request will have it's headers modififed to us 'Accept-Encoding' and 'Accept'
+        - authenticate: default true. Whether to include the account authentication token
+        - completionHandler: Called with result from server
+     */
+    func startDataTask(request: NSMutableURLRequest, authenticate:Bool = true, completionHandler: ((NSData?, NSURLResponse?, NSError?) -> Void))
     {
         request.setValue("gzip;q=1.0,compress;q=0.5", forHTTPHeaderField: "Accept-Encoding")
         request.setValue("application/json", forHTTPHeaderField:"Accept")

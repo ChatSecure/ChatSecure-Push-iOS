@@ -27,20 +27,22 @@ func setupURLMock() {
     
     
     
-    var getHeader = [
+    var baseHeader = [
         "Accept-Encoding":"gzip;q=1.0,compress;q=0.5",
         "Accept":"application/json",
     ]
     
-    var createAccountHeader = getHeader
+    var createAccountHeader = baseHeader
     createAccountHeader["Content-Type"] = "application/json"
     
     var postHeader = createAccountHeader
-    postHeader["Authorizatoin"] = "Token "+authToken
-    getHeader["Authorizatoin"] = postHeader["Authorizatoin"]
+    postHeader["Authorization"] = "Token "+authToken
+    baseHeader["Authorization"] = postHeader["Authorization"]
     
     let accountURL = baseURl.URLByAppendingPathComponent("accounts/")
     
+    
+    ///Create Account Request
     let createAccountRequest = UMKMockURLProtocol.expectMockHTTPPostRequestWithURL(accountURL, requestJSON: ["username":username,
         "password":password,
         "email":email],
@@ -51,11 +53,15 @@ func setupURLMock() {
         "token": authToken
     ])
     createAccountRequest.headers = createAccountHeader
+    createAccountRequest.headers.updateValue("67", forKey: "Content-Length")
     //Need to figure out way to include "Content-Length" which is added by Apple
-    //createAccountRequest.checksHeadersWhenMatching = true
+    createAccountRequest.checksHeadersWhenMatching = true
     
+    
+    
+    
+    ///Create Device Request
     let deviceURL = baseURl.URLByAppendingPathComponent("device/apns/")
-    
     let deviceRequest = UMKMockURLProtocol.expectMockHTTPPostRequestWithURL(deviceURL, requestJSON: ["name":deviceName,
         "registration_id":apnsToken],
         responseStatusCode: 200,
@@ -66,8 +72,11 @@ func setupURLMock() {
                 "date_created": dateCreatedSring
         ])
     deviceRequest.headers = postHeader
-    //deviceRequest.checksHeadersWhenMatching = true
+    deviceRequest.headers.updateValue("110", forKey: "Content-Length")
+    deviceRequest.checksHeadersWhenMatching = true
     
+    
+    ///Create Token Request
     let tokenURL = baseURl.URLByAppendingPathComponent("tokens/")
     
     let tokenRequest = UMKMockURLProtocol.expectMockHTTPPostRequestWithURL(tokenURL, requestJSON: [
@@ -81,7 +90,8 @@ func setupURLMock() {
         ])
     
     tokenRequest.headers = postHeader
-    //tokenRequest.checksHeadersWhenMatching = true
+    tokenRequest.headers.updateValue("110", forKey: "Content-Length")
+    tokenRequest.checksHeadersWhenMatching = true
     
     let getSingleTokenRequest = UMKPatternMatchingMockRequest(URLPattern: tokenURL.absoluteString.stringByAppendingString(":id"))
     
@@ -91,6 +101,8 @@ func setupURLMock() {
         if (request.HTTPMethod == "DELETE") {
             return UMKMockHTTPResponder(statusCode: 204, body: nil);
         }
+        
+        assert(request.valueForHTTPHeaderField("Authorization") != nil)
         
         var data:NSData?
         var json:[String:AnyObject]?
@@ -130,10 +142,14 @@ func setupURLMock() {
     UMKMockURLProtocol.expectMockRequest(allTokenRequest)
     UMKMockURLProtocol.expectMockRequest(getSingleTokenRequest)
     
+    
+    /// Message Request
     let messageURL = baseURl.URLByAppendingPathComponent("messages/")
     
     let request = UMKPatternMatchingMockRequest(URLPattern: messageURL.absoluteString)
     let block: (NSURLRequest!, [NSObject : AnyObject]!) -> UMKMockURLResponder! = {request, parameters in
+        
+        assert(request.valueForHTTPHeaderField("Authorization") == nil)
         
         let data = request.umk_HTTPBodyData()
         let jsonDict = try! NSJSONSerialization.JSONObjectWithData(data, options: NSJSONReadingOptions()) as! [String : AnyObject]
