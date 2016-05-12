@@ -104,11 +104,13 @@ class ChatSecurePushExampleTests: XCTestCase {
             let correctDeviceName = token?.name == tokenName
             let correctApnsToken = token?.registrationID == apnsToken
             let correctToken = token?.tokenString == whitelistToken
+            let correctTokenExpiresDate = token?.expires == Deserializer.dateFormatter().dateFromString(dateExpires)
             
             XCTAssertNil(error, "Erro creating token: \(error)")
             XCTAssertTrue(correctDeviceName, "Incorrect device name \(token?.name)")
             XCTAssertTrue(correctApnsToken, "Incorrect APNS token \(token?.registrationID)")
             XCTAssertTrue(correctToken, "Incorrect token \(token?.tokenString)")
+            XCTAssertTrue(correctTokenExpiresDate, "Incorect expiration date \(token?.expires)")
             
             expectation.fulfill()
         }

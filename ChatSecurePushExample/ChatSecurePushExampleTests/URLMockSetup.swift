@@ -18,6 +18,7 @@ let email = "email@email.com"
 let authToken = "f96197bfcf724523cb95626786d8c3baf8d16ada"
 let apnsToken = "c8631d1938f161cae7539b9692fd85ddd4fda5398c0ef5dc5e208b86612c322a"
 let dateCreatedSring = "2015-07-07T22:59:33.909289Z"
+let dateExpires = "2016-07-11T20:01:14.126Z"
 let deviceName = "Great big iPad"
 let tokenName = "This awesome token"
 let whitelistToken = "e6a73da924cfcf41d4a422e115e65d6f3e64fe3d"
@@ -86,7 +87,8 @@ func setupURLMock() {
         responseJSON: [
             "name": tokenName,
             "token": whitelistToken,
-            "apns_device": apnsToken
+            "apns_device": apnsToken,
+            "date_expires":dateExpires
         ])
     
     tokenRequest.headers = postHeader

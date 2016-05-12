@@ -14,7 +14,7 @@ var defaultDateFormatter = NSDateFormatter()
 public class Deserializer {
     
     //Unsure if this is the most 'Swift' way to do this
-    class func dateFormatter() -> NSDateFormatter {
+    public class func dateFormatter() -> NSDateFormatter {
         dispatch_once(&dispatchToken, { () -> Void in
             defaultDateFormatter.dateFormat = "yyyy-MM-dd'T'HH:mm:ss.SSSSSS'Z"
         })
@@ -71,13 +71,20 @@ public class Deserializer {
             throw NSError(domain: ErrorDomain.ChatsecurePush.rawValue, code: ErrorStatusCode.BadJSON.rawValue, userInfo: [NSLocalizedDescriptionKey:"JSON missing token string"])
         }
         
+        var dateExpires:NSDate? = nil
+        if let dateExpiresString = jsonDictionary[jsonKeys.dateExpires.rawValue] as? String {
+            dateExpires = self.dateFormatter().dateFromString(dateExpiresString)
+        }
+        
         if let registrationId = jsonDictionary[jsonKeys.apnsDeviceKey.rawValue] as? String {
             let token = Token(tokenString: tokenString, type: DeviceKind.iOS, deviceID: registrationId)
             token.name = jsonDictionary[jsonKeys.name.rawValue] as? String
+            token.expires = dateExpires
             return token
         } else if let registrationId = jsonDictionary[jsonKeys.gcmDeviceKey.rawValue] as? String {
             let token = Token(tokenString: tokenString, type: DeviceKind.Android, deviceID: registrationId)
             token.name = jsonDictionary[jsonKeys.name.rawValue] as? String
+            token.expires = dateExpires
             return token
         }
         else {
