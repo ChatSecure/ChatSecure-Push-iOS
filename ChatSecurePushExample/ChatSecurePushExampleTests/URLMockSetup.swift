@@ -95,7 +95,7 @@ func setupURLMock() {
     
     let getSingleTokenRequest = UMKPatternMatchingMockRequest(URLPattern: tokenURL.absoluteString.stringByAppendingString(":id"))
     
-    getSingleTokenRequest.HTTPMethods = NSSet(array: ["GET","DELETE"]) as Set<NSObject>
+    getSingleTokenRequest.HTTPMethods = Set(["GET","DELETE"])
     getSingleTokenRequest.responderGenerationBlock = {request, parameters in
         
         if (request.HTTPMethod == "DELETE") {
@@ -106,7 +106,7 @@ func setupURLMock() {
         
         var data:NSData?
         var json:[String:AnyObject]?
-        if let id = parameters["id"] as? String {
+        if let id = parameters["id"] {
             var t = Token.randomToken()
             t = Token(tokenString: id, type:t.type, deviceID: t.registrationID)
             json = try! Serializer.jsonValue(t)
@@ -147,11 +147,11 @@ func setupURLMock() {
     let messageURL = baseURl.URLByAppendingPathComponent("messages/")
     
     let request = UMKPatternMatchingMockRequest(URLPattern: messageURL.absoluteString)
-    let block: (NSURLRequest!, [NSObject : AnyObject]!) -> UMKMockURLResponder! = {request, parameters in
+    let block:UMKParameterizedResponderGenerationBlock = {request, parameters in
         
         assert(request.valueForHTTPHeaderField("Authorization") == nil)
         
-        let data = request.umk_HTTPBodyData()
+        let data = request.umk_HTTPBodyData()!
         let jsonDict = try! NSJSONSerialization.JSONObjectWithData(data, options: NSJSONReadingOptions()) as! [String : AnyObject]
         let message = try! Deserializer.messageFromServerDictionary(jsonDict, url: request.URL!)
         
