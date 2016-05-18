@@ -24,6 +24,7 @@ public enum Endpoint: String {
     case GCM = "device/gcm"
     case Tokens = "tokens"
     case Messages = "messages"
+    case Pubsub = "pubsub"
 }
 
 public enum jsonKeys: String {
@@ -44,6 +45,7 @@ public enum jsonKeys: String {
     case alertKey = "alert"
     case id = "id"
     case results = "results"
+    case jid = "jid"
 }
 
 /** 
@@ -67,6 +69,7 @@ public class Client: NSObject {
     private var accountEndpoint: AccountEnpoint
     private var tokenEndpoint: TokenEndpoint
     private var messageEndpoint: MessageEndpoint
+    private var pubsubEndpoint: APIEndpoint
     private let urlSessionDelegate = URLSessionDelegate()
     
     
@@ -88,6 +91,7 @@ public class Client: NSObject {
         self.accountEndpoint = AccountEnpoint(baseUrl: self.baseUrl)
         self.tokenEndpoint = TokenEndpoint(baseUrl: self.baseUrl)
         self.messageEndpoint = MessageEndpoint(baseUrl: self.baseUrl)
+        self.pubsubEndpoint = APIEndpoint(baseUrl: self.baseUrl)
     }
     
 // MARK: User
@@ -315,6 +319,38 @@ public class Client: NSObject {
         } catch let error as NSError {
             self.callbackQueue.addOperationWithBlock({ () -> Void in
                 completion(message: nil, error: error)
+            })
+        }
+    }
+    
+// MARK: Pubsub (XEP-0357)
+    public func getPubsubEndpoint(completion:(pubsubEndpoint:String?,error:NSError?) -> Void) {
+        do {
+            let request = try self.pubsubEndpoint.request(Method.GET, endpoint: Endpoint.Pubsub.rawValue, jsonDictionary: nil)
+            
+            self.startDataTask(request,authenticate: false, completionHandler: { (responseData, response, responseError) -> Void in
+                var endpoint:String? = nil
+                var error:NSError? = nil
+                do {
+                    try self.pubsubEndpoint.handleError(responseData, response: response, error: error)
+                    
+                    guard let data = responseData else {
+                        throw NSError(domain: ErrorDomain.ChatsecurePush.rawValue, code: ErrorStatusCode.NoData.rawValue, userInfo: nil)
+                    }
+                    
+                    endpoint = try Deserializer.pubsub(data)
+                } catch let err as NSError {
+                    error = err
+                }
+                
+                self.callbackQueue.addOperationWithBlock({ () -> Void in
+                    completion(pubsubEndpoint: endpoint, error: error)
+                })
+            })
+            
+        } catch let error as NSError {
+            self.callbackQueue.addOperationWithBlock({ () -> Void in
+                completion(pubsubEndpoint: nil, error: error)
             })
         }
     }
