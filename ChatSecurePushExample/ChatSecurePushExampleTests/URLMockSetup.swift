@@ -18,6 +18,7 @@ let email = "email@email.com"
 let authToken = "f96197bfcf724523cb95626786d8c3baf8d16ada"
 let apnsToken = "c8631d1938f161cae7539b9692fd85ddd4fda5398c0ef5dc5e208b86612c322a"
 let dateCreatedSring = "2015-07-07T22:59:33.909289Z"
+let dateExpires = "2016-07-11T20:01:14.126Z"
 let deviceName = "Great big iPad"
 let tokenName = "This awesome token"
 let whitelistToken = "e6a73da924cfcf41d4a422e115e65d6f3e64fe3d"
@@ -86,7 +87,8 @@ func setupURLMock() {
         responseJSON: [
             "name": tokenName,
             "token": whitelistToken,
-            "apns_device": apnsToken
+            "apns_device": apnsToken,
+            "date_expires":dateExpires
         ])
     
     tokenRequest.headers = postHeader
@@ -95,7 +97,7 @@ func setupURLMock() {
     
     let getSingleTokenRequest = UMKPatternMatchingMockRequest(URLPattern: tokenURL.absoluteString.stringByAppendingString(":id"))
     
-    getSingleTokenRequest.HTTPMethods = NSSet(array: ["GET","DELETE"]) as Set<NSObject>
+    getSingleTokenRequest.HTTPMethods = Set(["GET","DELETE"])
     getSingleTokenRequest.responderGenerationBlock = {request, parameters in
         
         if (request.HTTPMethod == "DELETE") {
@@ -106,7 +108,7 @@ func setupURLMock() {
         
         var data:NSData?
         var json:[String:AnyObject]?
-        if let id = parameters["id"] as? String {
+        if let id = parameters["id"] {
             var t = Token.randomToken()
             t = Token(tokenString: id, type:t.type, deviceID: t.registrationID)
             json = try! Serializer.jsonValue(t)
@@ -147,11 +149,11 @@ func setupURLMock() {
     let messageURL = baseURl.URLByAppendingPathComponent("messages/")
     
     let request = UMKPatternMatchingMockRequest(URLPattern: messageURL.absoluteString)
-    let block: (NSURLRequest!, [NSObject : AnyObject]!) -> UMKMockURLResponder! = {request, parameters in
+    let block:UMKParameterizedResponderGenerationBlock = {request, parameters in
         
         assert(request.valueForHTTPHeaderField("Authorization") == nil)
         
-        let data = request.umk_HTTPBodyData()
+        let data = request.umk_HTTPBodyData()!
         let jsonDict = try! NSJSONSerialization.JSONObjectWithData(data, options: NSJSONReadingOptions()) as! [String : AnyObject]
         let message = try! Deserializer.messageFromServerDictionary(jsonDict, url: request.URL!)
         

@@ -37,6 +37,7 @@ public enum jsonKeys: String {
     case deviceID = "device_id"
     case active = "active"
     case dateCreated = "date_created" //ISO-8601
+    case dateExpires = "date_expires"
     case apnsDeviceKey = "apns_device"
     case gcmDeviceKey = "gcm_device"
     case dataKey = "data"
