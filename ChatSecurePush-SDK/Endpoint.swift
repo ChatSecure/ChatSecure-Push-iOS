@@ -23,7 +23,7 @@ class APIEndpoint {
     }
     
     func url(endPoint: String) -> NSURL {
-        return self.baseURL.URLByAppendingPathComponent(endPoint+"/")
+        return self.baseURL.URLByAppendingPathComponent(endPoint+"/")!
     }
     
     func handleError(data: NSData?, response: NSURLResponse?, error: NSError?) throws {
