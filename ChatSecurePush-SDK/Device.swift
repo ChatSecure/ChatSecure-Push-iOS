@@ -11,44 +11,29 @@ import Foundation
 public enum DeviceKind:Int {
     case unknown  = 0
     case iOS     = 1
-    case Android = 2
+    case android = 2
 }
 
-public extension NSData {
+public extension Data {
     
-    ///http://stackoverflow.com/questions/7520615/how-to-convert-an-nsdata-into-an-nsstring-hex-string/7520655#7520655
-    public var hexString : String {
-        let buf = UnsafePointer<UInt8>(bytes)
-        let charA = UInt8(UnicodeScalar("a").value)
-        let char0 = UInt8(UnicodeScalar("0").value)
-        
-        func itoh(i: UInt8) -> UInt8 {
-            return (i > 9) ? (charA + i - 10) : (char0 + i)
-        }
-        
-        let p = UnsafeMutablePointer<UInt8>.alloc(length * 2)
-        
-        for i in 0..<length {
-            p[i*2] = itoh((buf[i] >> 4) & 0xF)
-            p[i*2+1] = itoh(buf[i] & 0xF)
-        }
-        
-        return NSString(bytesNoCopy: p, length: length*2, encoding: NSUTF8StringEncoding, freeWhenDone: true)! as String
+    //https://stackoverflow.com/questions/39075043/how-to-convert-data-to-hex-string-in-swift/40089462#40089462
+    public func hexString() -> String {
+        return map { String(format: "%02hhx", $0) }.joined()
     }
 }
 
-public class Device: NSObject, NSCoding, NSCopying {
-    public var name: String?
-    public var id: String?
-    public var deviceID: String?
-    public var registrationID: String
-    public var active = true
-    public var deviceKind = DeviceKind.unknown
-    public let dateCreated: NSDate
+open class Device: NSObject, NSCoding, NSCopying {
+    open var name: String?
+    open var id: String?
+    open var deviceID: String?
+    open var registrationID: String
+    open var active = true
+    open var deviceKind = DeviceKind.unknown
+    open let dateCreated: Date
     
     
     
-    public init (registrationID: String,dateCreated: NSDate, name: String?, deviceID: String?, id: String?) {
+    public init (registrationID: String,dateCreated: Date, name: String?, deviceID: String?, id: String?) {
         self.name = name
         self.dateCreated = dateCreated
         self.registrationID = registrationID
@@ -57,21 +42,21 @@ public class Device: NSObject, NSCoding, NSCopying {
     }
     
     public required init?(coder aDecoder: NSCoder) {
-        self.name = aDecoder.decodeObjectForKey("name") as? String
-        self.id = aDecoder.decodeObjectForKey("id") as? String
-        self.deviceID = aDecoder.decodeObjectForKey("deviceID") as? String
-        if let registrationID = aDecoder.decodeObjectForKey("registrationID") as? String {
+        self.name = aDecoder.decodeObject(forKey: "name") as? String
+        self.id = aDecoder.decodeObject(forKey: "id") as? String
+        self.deviceID = aDecoder.decodeObject(forKey: "deviceID") as? String
+        if let registrationID = aDecoder.decodeObject(forKey: "registrationID") as? String {
             self.registrationID = registrationID
         } else {
             self.registrationID = ""
         }
-        self.active = aDecoder.decodeBoolForKey("active")
-        if let date = aDecoder.decodeObjectForKey("dateCreated") as? NSDate {
+        self.active = aDecoder.decodeBool(forKey: "active")
+        if let date = aDecoder.decodeObject(forKey: "dateCreated") as? Date {
             self.dateCreated = date
         } else {
-            self.dateCreated = NSDate()
+            self.dateCreated = Date()
         }
-        if let deviceKindRawValue = aDecoder.decodeObjectForKey("deviceKind") as? Int {
+        if let deviceKindRawValue = aDecoder.decodeObject(forKey: "deviceKind") as? Int {
             if let deviceKind = DeviceKind(rawValue: deviceKindRawValue) {
                 self.deviceKind = deviceKind
             } else {
@@ -82,17 +67,17 @@ public class Device: NSObject, NSCoding, NSCopying {
         }
     }
     
-    public func encodeWithCoder(aCoder: NSCoder) {
-        aCoder.encodeObject(self.name, forKey: "name")
-        aCoder.encodeObject(self.id, forKey: "id")
-        aCoder.encodeObject(self.deviceID, forKey: "deviceID")
-        aCoder.encodeObject(self.registrationID, forKey: "registrationID")
-        aCoder.encodeBool(self.active, forKey: "active")
-        aCoder.encodeObject(self.dateCreated, forKey: "dateCreated")
-        aCoder.encodeObject(self.deviceKind.rawValue, forKey: "deviceKind")
+    open func encode(with aCoder: NSCoder) {
+        aCoder.encode(self.name, forKey: "name")
+        aCoder.encode(self.id, forKey: "id")
+        aCoder.encode(self.deviceID, forKey: "deviceID")
+        aCoder.encode(self.registrationID, forKey: "registrationID")
+        aCoder.encode(self.active, forKey: "active")
+        aCoder.encode(self.dateCreated, forKey: "dateCreated")
+        aCoder.encode(self.deviceKind.rawValue, forKey: "deviceKind")
     }
     
-    public func copyWithZone(zone: NSZone) -> AnyObject {
+    open func copy(with zone: NSZone?) -> Any {
         let newDevice = Device(registrationID: self.registrationID, dateCreated: self.dateCreated, name: self.name, deviceID: self.deviceID, id: self.deviceID)
         newDevice.active = self.active
         newDevice.deviceKind = self.deviceKind

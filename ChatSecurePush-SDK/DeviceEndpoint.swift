@@ -10,7 +10,7 @@ import Foundation
 
 class APNSDeviceEndpoint: APIEndpoint {
     
-    func postRequest(APNSToken: String, name: String?, deviceID: String?, serverID: String?) throws -> NSMutableURLRequest {
+    func postRequest(_ APNSToken: String, name: String?, deviceID: String?, serverID: String?) throws -> NSMutableURLRequest {
         var parameters = [
             jsonKeys.registrationID.rawValue: APNSToken,
         ]
@@ -18,25 +18,25 @@ class APNSDeviceEndpoint: APIEndpoint {
         parameters[jsonKeys.name.rawValue] = name
         parameters[jsonKeys.deviceID.rawValue] = deviceID
         
-        var endpoint = Endpoint.APNS.rawValue
+        var endpoint = Endpoint.apns.rawValue
         if let id = serverID {
             endpoint = "\(endpoint)/\(id)"
         }
         
-        return try self.request(Method.POST, endpoint: endpoint, jsonDictionary: parameters)
+        return try self.request(Method.post, endpoint: endpoint, jsonDictionary: parameters)
     }
     
-    func putRequest(APNSToken: String, name: String?, deviceID: String?, serverID: String?) throws -> NSMutableURLRequest {
+    func putRequest(_ APNSToken: String, name: String?, deviceID: String?, serverID: String?) throws -> NSMutableURLRequest {
         let request = try self.postRequest(APNSToken, name: name, deviceID: deviceID, serverID: serverID)
-        request.HTTPMethod = Method.PUT.rawValue
+        request.httpMethod = Method.put.rawValue
         return request
     }
     
-    func deviceFromResponse(responseData: NSData?, response: NSURLResponse?, error: NSError?) throws -> Device {
+    func deviceFromResponse(_ responseData: Data?, response: URLResponse?, error: Error?) throws -> Device {
         try self.handleError(responseData, response: response, error: error)
         
         guard let data = responseData else {
-            throw NSError(domain: ErrorDomain.ChatsecurePush.rawValue, code: ErrorStatusCode.NoData.rawValue, userInfo: nil)
+            throw NSError(domain: ErrorDomain.chatsecurePush.rawValue, code: ErrorStatusCode.noData.rawValue, userInfo: nil)
         }
         
         return try Deserializer.device(data, kind: .iOS)

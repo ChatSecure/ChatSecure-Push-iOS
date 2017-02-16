@@ -16,7 +16,7 @@ Pod::Spec.new do |s|
   #
 
   s.name         = "ChatSecure-Push-iOS"
-  s.version      = "0.2"
+  s.version      = "1.0"
   s.summary      = "The iOS SDK for ChatSecure-Push-Server"
 
   s.description  = <<-DESC

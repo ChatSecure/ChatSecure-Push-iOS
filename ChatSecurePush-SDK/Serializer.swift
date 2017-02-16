@@ -9,24 +9,24 @@
 import Foundation
 
 
-public class Serializer {
+open class Serializer {
     
-    public class func jsonValue(object:AnyObject) throws -> [String:AnyObject]? {
+    open class func jsonValue(_ object:AnyObject) throws -> [String:AnyObject]? {
         
         var json: [String: AnyObject]? = nil
         
         if let message = object as? Message {
-            json = [jsonKeys.token.rawValue: message.token]
+            json = [jsonKeys.token.rawValue: message.token as AnyObject]
             if let data = message.data {
-                json?.updateValue(data, forKey: jsonKeys.dataKey.rawValue)
+                json?.updateValue(data as AnyObject, forKey: jsonKeys.dataKey.rawValue)
             }
         }
         
         if let token = object as? Token {
-            json = [jsonKeys.token.rawValue: token.tokenString]
+            json = [jsonKeys.token.rawValue: token.tokenString as AnyObject]
             
             if let name = token.name {
-                json?.updateValue(name, forKey: jsonKeys.name.rawValue)
+                json?.updateValue(name as AnyObject, forKey: jsonKeys.name.rawValue)
             }
             
             
@@ -34,11 +34,11 @@ public class Serializer {
             if let deviceID = token.registrationID {
                 switch token.type {
                 case .iOS:
-                    json?.updateValue(deviceID, forKey: jsonKeys.apnsDeviceKey.rawValue)
-                case .Android:
-                    json?.updateValue(deviceID, forKey: jsonKeys.gcmDeviceKey.rawValue)
+                    json?.updateValue(deviceID as AnyObject, forKey: jsonKeys.apnsDeviceKey.rawValue)
+                case .android:
+                    json?.updateValue(deviceID as AnyObject, forKey: jsonKeys.gcmDeviceKey.rawValue)
                 default:
-                    throw NSError(domain: ErrorDomain.ChatsecurePush.rawValue, code: ErrorStatusCode.NoTokenType.rawValue, userInfo: nil)
+                    throw NSError(domain: ErrorDomain.chatsecurePush.rawValue, code: ErrorStatusCode.noTokenType.rawValue, userInfo: nil)
                 }
                 
             }

@@ -10,7 +10,7 @@ import Foundation
 import ChatSecure_Push_iOS
 
 func uuid() -> String {
-    return NSUUID().UUIDString
+    return UUID().uuidString
 }
 
 extension Token {
