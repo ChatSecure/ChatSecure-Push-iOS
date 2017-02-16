@@ -325,9 +325,9 @@ open class Client: NSObject {
     }
     
 // MARK: Pubsub (XEP-0357)
-    public func getPubsubEndpoint(completion:(pubsubEndpoint:String?,error:NSError?) -> Void) {
+    open func getPubsubEndpoint(_ completion: @escaping (_ pubsubEndpoint:String?,_ error:Error?) -> Void) {
         do {
-            let request = try self.pubsubEndpoint.request(Method.GET, endpoint: Endpoint.Pubsub.rawValue, jsonDictionary: nil)
+            let request = try self.pubsubEndpoint.request(.get, endpoint: Endpoint.pubsub.rawValue, jsonDictionary: nil)
             
             self.startDataTask(request,authenticate: false, completionHandler: { (responseData, response, responseError) -> Void in
                 var endpoint:String? = nil
@@ -336,22 +336,22 @@ open class Client: NSObject {
                     try self.pubsubEndpoint.handleError(responseData, response: response, error: error)
                     
                     guard let data = responseData else {
-                        throw NSError(domain: ErrorDomain.ChatsecurePush.rawValue, code: ErrorStatusCode.NoData.rawValue, userInfo: nil)
+                        throw NSError(domain: ErrorDomain.chatsecurePush.rawValue, code: ErrorStatusCode.noData.rawValue, userInfo: nil)
                     }
                     
-                    endpoint = try Deserializer.pubsub(data)
+                    endpoint = try Deserializer.pubsub(data: data)
                 } catch let err as NSError {
                     error = err
                 }
                 
-                self.callbackQueue.addOperationWithBlock({ () -> Void in
-                    completion(pubsubEndpoint: endpoint, error: error)
+                self.callbackQueue.addOperation({ () -> Void in
+                    completion(endpoint, error)
                 })
             })
             
         } catch let error as NSError {
-            self.callbackQueue.addOperationWithBlock({ () -> Void in
-                completion(pubsubEndpoint: nil, error: error)
+            self.callbackQueue.addOperation({ () -> Void in
+                completion(nil, error)
             })
         }
     }

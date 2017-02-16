@@ -159,13 +159,13 @@ open class Deserializer {
         return try self.messageFromServerDictionary(json, url: url)
     }
     
-    public class func pubsub(data: NSData) throws -> String {
-        guard let json = try NSJSONSerialization.JSONObjectWithData(data, options: NSJSONReadingOptions()) as? [String: AnyObject] else {
-            throw NSError(domain: ErrorDomain.ChatsecurePush.rawValue, code: ErrorStatusCode.BadJSON.rawValue, userInfo: [NSLocalizedDescriptionKey:"Unable to deserialize JSON as String:AnyObject"])
+    public class func pubsub(data: Data) throws -> String {
+        guard let json = try JSONSerialization.jsonObject(with: data, options: JSONSerialization.ReadingOptions()) as? [String: AnyObject] else {
+            throw NSError(domain: ErrorDomain.chatsecurePush.rawValue, code: ErrorStatusCode.badJSON.rawValue, userInfo: [NSLocalizedDescriptionKey:"Unable to deserialize JSON as String:AnyObject"])
         }
         
         guard let pubsub = json[jsonKeys.jid.rawValue] as? String else {
-            throw NSError(domain: ErrorDomain.ChatsecurePush.rawValue, code: ErrorStatusCode.BadJSON.rawValue, userInfo: [NSLocalizedDescriptionKey:"JSON missing pubsub string"])
+            throw NSError(domain: ErrorDomain.chatsecurePush.rawValue, code: ErrorStatusCode.badJSON.rawValue, userInfo: [NSLocalizedDescriptionKey:"JSON missing pubsub string"])
         }
         return pubsub
     }
