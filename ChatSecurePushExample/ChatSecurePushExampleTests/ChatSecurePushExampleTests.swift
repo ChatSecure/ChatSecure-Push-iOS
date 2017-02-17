@@ -192,7 +192,12 @@ class ChatSecurePushExampleTests: XCTestCase {
         
         client.sendMessage(message) { (message, error) -> Void in
             XCTAssertNil(message)
-            XCTAssertNotNil(error)
+            guard let err = error as? NSError else {
+                XCTFail()
+                expectation.fulfill()
+                return
+            }
+            XCTAssertEqual(err.code, 404)
             expectation.fulfill()
         }
         

@@ -1,8 +1,8 @@
 language: objective-c
 osx_image: xcode8.2
-xcode_sdk: iphonesimulator9.2
 cache: cocoapods
 
-podfile: ./ChatSecurePushExample/Podfile
-xcode_workspace: ./ChatSecurePushExample/ChatSecurePushExample.xcworkspace
-xcode_scheme: ChatSecurePushExample
+script:
+  - pod update --project-directory=ChatSecurePushExample
+  - travis_retry xcodebuild -workspace ChatSecurePushExample/ChatSecurePushExample.xcworkspace -scheme ChatSecurePushExample -sdk iphonesimulator -destination "OS=10.2,name=iPhone 6S Plus" test | xcpretty -c
+  - pod lib lint --allow-warnings
