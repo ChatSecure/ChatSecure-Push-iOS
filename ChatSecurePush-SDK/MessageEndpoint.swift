@@ -17,25 +17,25 @@ class MessageEndpoint:APIEndpoint {
      - Parameter message: The message to be serialized and add to the mutableURLRequest
      - Returns: A mutableURLRequest that can be used to post to the message endpoint
      */
-    func postRequest(message:Message) throws -> NSMutableURLRequest {
+    func postRequest(_ message:Message) throws -> NSMutableURLRequest {
         let jsonDictionary = try Serializer.jsonValue(message)
         
         if let url = message.url {
-            return try APIEndpoint.request(Method.POST.rawValue, URL: url, jsonDictionary: jsonDictionary)
+            return try APIEndpoint.request(Method.post.rawValue, URL: url, jsonDictionary: jsonDictionary)
         } else {
-            return try self.request(.POST, endpoint: Endpoint.Messages.rawValue, jsonDictionary: jsonDictionary)
+            return try self.request(.post, endpoint: Endpoint.messages.rawValue, jsonDictionary: jsonDictionary)
         }
     }
     
-    func messageFromResponse(responseData: NSData?, response: NSURLResponse?, error: NSError?) throws -> Message {
+    func messageFromResponse(_ responseData: Data?, response: URLResponse?, error: Error?) throws -> Message {
         try self.handleError(responseData, response: response, error: error)
         
         guard let data = responseData else {
-            throw NSError(domain: ErrorDomain.ChatsecurePush.rawValue, code: ErrorStatusCode.NoData.rawValue, userInfo: nil)
+            throw NSError(domain: ErrorDomain.chatsecurePush.rawValue, code: ErrorStatusCode.noData.rawValue, userInfo: nil)
         }
         
-        guard let url = response?.URL else {
-            throw NSError.error(.MissingURL, userInfo: [NSLocalizedDescriptionKey:"Required to have a url inorder to create a Message object"])
+        guard let url = response?.url else {
+            throw NSError.error(.missingURL, userInfo: [NSLocalizedDescriptionKey:"Required to have a url inorder to create a Message object"])
         }
         
         return try Deserializer.message(data, url: url)

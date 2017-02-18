@@ -26,8 +26,8 @@ class ChatSecurePushExampleTests: XCTestCase {
         UMKMockURLProtocol.disable()
     }
     
-    func defaultClient(authToken:String?) -> Client {
-        let configuration = NSURLSessionConfiguration.defaultSessionConfiguration()
+    func defaultClient(_ authToken:String?) -> Client {
+        let configuration = URLSessionConfiguration.default
         configuration.protocolClasses = [UMKMockURLProtocol.self]
         
         var account :Account? = nil
@@ -48,7 +48,7 @@ class ChatSecurePushExampleTests: XCTestCase {
     
     func testCreatingAccount() {
         let client = self.defaultClient(nil)
-        let expectation = self.expectationWithDescription("Creating Account")
+        let expectation = self.expectation(description: "Creating Account")
         
         client.registerNewUser(username, password: password, email: email) { (account, error) -> Void in
             
@@ -65,9 +65,9 @@ class ChatSecurePushExampleTests: XCTestCase {
             expectation.fulfill()
         }
         
-        self.waitForExpectationsWithTimeout(10, handler: { (error) -> Void in
+        self.waitForExpectations(timeout: 10, handler: { (error) -> Void in
             if( error != nil) {
-                print(error)
+                print("\(error)")
             }
         })
     }
@@ -75,7 +75,7 @@ class ChatSecurePushExampleTests: XCTestCase {
     func testCreatingDevice() {
         let client = self.defaultClient(authToken)
         
-        let expectation = self.expectationWithDescription("Creating Device")
+        let expectation = self.expectation(description: "Creating Device")
         
         client.registerDevice(apnsToken, name: deviceName, deviceID: nil) { (device, error) -> Void in
             let correctDeviceName = device?.name == deviceName
@@ -88,9 +88,9 @@ class ChatSecurePushExampleTests: XCTestCase {
             expectation.fulfill()
         }
         
-        self.waitForExpectationsWithTimeout(10, handler: { (error) -> Void in
+        self.waitForExpectations(timeout: 10, handler: { (error) -> Void in
             if( error != nil) {
-                print(error)
+                print("\(error)")
             }
         })
     }
@@ -98,13 +98,13 @@ class ChatSecurePushExampleTests: XCTestCase {
     func testCreatingToken() {
         let client = self.defaultClient(authToken)
         
-        let expectation = self.expectationWithDescription("Creating Token")
+        let expectation = self.expectation(description: "Creating Token")
         
         client.createToken(apnsToken, name: tokenName) { (token, error) -> Void in
             let correctDeviceName = token?.name == tokenName
             let correctApnsToken = token?.registrationID == apnsToken
             let correctToken = token?.tokenString == whitelistToken
-            let correctTokenExpiresDate = token?.expires == Deserializer.dateFormatter().dateFromString(dateExpires)
+            let correctTokenExpiresDate = token?.expires == Deserializer.dateFormatter().date(from: dateExpires)
             
             XCTAssertNil(error, "Erro creating token: \(error)")
             XCTAssertTrue(correctDeviceName, "Incorrect device name \(token?.name)")
@@ -115,9 +115,9 @@ class ChatSecurePushExampleTests: XCTestCase {
             expectation.fulfill()
         }
         
-        self.waitForExpectationsWithTimeout(10, handler: { (error) -> Void in
+        self.waitForExpectations(timeout: 10, handler: { (error) -> Void in
             if( error != nil) {
-                print(error)
+                print("\(error)")
             }
         })
     }
@@ -125,16 +125,16 @@ class ChatSecurePushExampleTests: XCTestCase {
     func testGettingTokens() {
         let client = self.defaultClient(authToken)
         
-        let expectation = self.expectationWithDescription("Getting multiple tokens")
+        let expectation = self.expectation(description: "Getting multiple tokens")
         client.tokens(nil, completion: { (tokens, error) -> Void in
             XCTAssertGreaterThan(tokens!.count, 0, "No tokens found")
             XCTAssertNil(error, "Error \(error)")
             expectation.fulfill()
         })
         
-        self.waitForExpectationsWithTimeout(20, handler: { (error) -> Void in
+        self.waitForExpectations(timeout: 20, handler: { (error) -> Void in
             if error != nil {
-                print(error)
+                print("\(error)")
             }
         })
     }
@@ -143,13 +143,13 @@ class ChatSecurePushExampleTests: XCTestCase {
     func testDeletingToken() {
         let client = self.defaultClient(authToken)
         
-        let expectation = self.expectationWithDescription("Deleting token")
+        let expectation = self.expectation(description: "Deleting token")
         client.revokeToken("tokenID") { (error) -> Void in
             XCTAssertNil(error)
             expectation.fulfill()
         }
         
-        self.waitForExpectationsWithTimeout(30) { (err) -> Void in
+        self.waitForExpectations(timeout: 30) { (err) -> Void in
             
         }
     }
@@ -157,11 +157,11 @@ class ChatSecurePushExampleTests: XCTestCase {
     func testSendingMessage() {
         let client = self.defaultClient(authToken)
         
-        let expectation = self.expectationWithDescription("Sending Message")
+        let expectation = self.expectation(description: "Sending Message")
         let dict = [
             "key":["key":"value"],
             "Help":"Me"
-        ]
+        ] as [String : Any]
         
         let originalMessage = Message(token:"23", url:nil, data:dict)
         
@@ -175,7 +175,7 @@ class ChatSecurePushExampleTests: XCTestCase {
             expectation.fulfill()
         }
         
-        self.waitForExpectationsWithTimeout(30, handler: { (error) -> Void in
+        self.waitForExpectations(timeout: 30, handler: { (error) -> Void in
             if error != nil {
                 print("Error: \(error)")
             }
@@ -186,17 +186,22 @@ class ChatSecurePushExampleTests: XCTestCase {
     func testErrorSendingMessage() {
         let client = self.defaultClient(authToken)
         
-        let expectation = self.expectationWithDescription("Error Sending Message")
+        let expectation = self.expectation(description: "Error Sending Message")
         
         let message = Message(token: errorToken, url: nil, data: nil)
         
         client.sendMessage(message) { (message, error) -> Void in
             XCTAssertNil(message)
-            XCTAssertNotNil(error)
+            guard let err = error as? NSError else {
+                XCTFail()
+                expectation.fulfill()
+                return
+            }
+            XCTAssertEqual(err.code, 404)
             expectation.fulfill()
         }
         
-        self.waitForExpectationsWithTimeout(30) { (err) -> Void in
+        self.waitForExpectations(timeout: 30) { (err) -> Void in
             if (err != nil) {
                 print("\(err)")
             }
@@ -207,11 +212,11 @@ class ChatSecurePushExampleTests: XCTestCase {
     func testSendingMessageOtherServer() {
         let client = self.defaultClient(authToken)
         
-        let expectation = self.expectationWithDescription("Sending Message to other server")
+        let expectation = self.expectation(description: "Sending Message to other server")
         let dict = [
             "key":["key":"value"],
             "Help":"Me"
-        ]
+        ] as [String : Any]
         
         let origMessage = Message(token: "111", url: otherMessageURL, data: dict)
         client.sendMessage(origMessage) { (message, error) -> Void in
@@ -219,7 +224,7 @@ class ChatSecurePushExampleTests: XCTestCase {
             expectation.fulfill()
         }
         
-        self.waitForExpectationsWithTimeout(30) { (error) -> Void in
+        self.waitForExpectations(timeout: 30) { (error) -> Void in
             if error != nil {
                 print("Error: \(error)")
             }
@@ -228,7 +233,7 @@ class ChatSecurePushExampleTests: XCTestCase {
     
     func testAPNSResponse() {
         let token = "09bd6d3cb017959eeec6cf031dbf7ad60f0a3bcd"
-        let dict : [String: AnyObject] = ["aps": [
+        let dict : [String: Any] = ["aps": [
             "alert": [
                 "message": [
                     "token": token

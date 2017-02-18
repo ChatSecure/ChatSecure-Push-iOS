@@ -20,13 +20,13 @@ class ViewController: UIViewController, UITextFieldDelegate {
         self.passwordTextField.delegate = self
     }
     
-    func textFieldShouldReturn(textField: UITextField) -> Bool {
+    func textFieldShouldReturn(_ textField: UITextField) -> Bool {
         textField.resignFirstResponder()
         return false
     }
     
-    override func prepareForSegue(segue: UIStoryboardSegue, sender: AnyObject?) {
-        if let vc = segue.destinationViewController as? AccountDetailViewController {
+    override func prepare(for segue: UIStoryboardSegue, sender: Any?) {
+        if let vc = segue.destination as? AccountDetailViewController {
             if let username = self.usernameTextField.text {
                 vc.account = Account(username:username)
                 vc.password = self.passwordTextField.text

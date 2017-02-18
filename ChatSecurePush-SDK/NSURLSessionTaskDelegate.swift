@@ -8,16 +8,16 @@
 
 import Foundation
 
-public class URLSessionDelegate:NSObject, NSURLSessionDataDelegate {
+open class URLSessionDelegate:NSObject, URLSessionDataDelegate {
     
     /// Handle redirects
-    public func URLSession(session: NSURLSession, task: NSURLSessionTask, willPerformHTTPRedirection response: NSHTTPURLResponse, newRequest request: NSURLRequest, completionHandler: (NSURLRequest?) -> Void) {
-        guard let req = task.originalRequest?.mutableCopy() as? NSMutableURLRequest else {
+    open func urlSession(_ session: URLSession, task: URLSessionTask, willPerformHTTPRedirection response: HTTPURLResponse, newRequest request: URLRequest, completionHandler: @escaping (URLRequest?) -> Void) {
+        guard let req = (task.originalRequest as NSURLRequest?)?.mutableCopy() as? NSMutableURLRequest else {
             completionHandler(request)
             return
         }
         
-        req.URL = request.URL
-        completionHandler(req)
+        req.url = request.url
+        completionHandler(req as URLRequest)
     }
 }

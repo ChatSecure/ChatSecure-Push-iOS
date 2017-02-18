@@ -10,16 +10,16 @@ import Foundation
 
 
 public enum ErrorDomain: String {
-    case ChatsecurePush = "org.chatsecure.push"
+    case chatsecurePush = "org.chatsecure.push"
 }
 
 ///Enum of all the status codes used in the SDK for erros
 public enum ErrorStatusCode: NSInteger {
-    case NoData = 601
-    case BadJSON = 602
-    case NoTokenType = 603
-    case MissingURL = 604
-    case CreatingRequest = 605
+    case noData = 601
+    case badJSON = 602
+    case noTokenType = 603
+    case missingURL = 604
+    case creatingRequest = 605
 }
 
 extension NSError {
@@ -32,7 +32,7 @@ extension NSError {
      
      - Returns: A ChatSecure push error
      */
-    public class func error(code:ErrorStatusCode, userInfo: [NSObject : AnyObject]?) -> NSError {
-        return NSError(domain: ErrorDomain.ChatsecurePush.rawValue, code: code.rawValue, userInfo: userInfo)
+    public class func error(_ code:ErrorStatusCode, userInfo: [AnyHashable: Any]?) -> NSError {
+        return NSError(domain: ErrorDomain.chatsecurePush.rawValue, code: code.rawValue, userInfo: userInfo)
     }
 }

@@ -9,22 +9,22 @@
 import Foundation
 
 public enum Method: String {
-    case OPTIONS = "OPTIONS"
-    case GET = "GET"
-    case HEAD = "HEAD"
-    case POST = "POST"
-    case PUT = "PUT"
-    case PATCH = "PATCH"
-    case DELETE = "DELETE"
+    case options = "OPTIONS"
+    case get = "GET"
+    case head = "HEAD"
+    case post = "POST"
+    case put = "PUT"
+    case patch = "PATCH"
+    case delete = "DELETE"
 }
 
 public enum Endpoint: String {
-    case Accounts = "accounts"
-    case APNS = "device/apns"
-    case GCM = "device/gcm"
-    case Tokens = "tokens"
-    case Messages = "messages"
-    case Pubsub = "pubsub"
+    case accounts = "accounts"
+    case apns = "device/apns"
+    case gcm = "device/gcm"
+    case tokens = "tokens"
+    case messages = "messages"
+	case pubsub = "pubsub"
 }
 
 public enum jsonKeys: String {
@@ -56,22 +56,22 @@ public enum jsonKeys: String {
   - The methods that involve network operations will return the HTTP status code in the range 100...500
   - Internal errors or non network errors will be in the 600 and greater range and are documented in Error.swift
 */
-public class Client: NSObject {
+open class Client: NSObject {
     /// The API URL in the format in the format `https://example.com/api/v1/`
-    public let baseUrl: NSURL
+    open let baseUrl: URL
     /// The url session to be used for calls to the server
-    public let urlSession: NSURLSession
+    open let urlSession: URLSession
     /// This is the queue where callbacks from the `Client` are executed on
-    public var callbackQueue = NSOperationQueue()
+    open var callbackQueue = OperationQueue()
     /// The account containing the data need for server authentication. This needs to be set after `registerNewUser` with the returned account.
-    public var account: Account?
+    open var account: Account?
     
-    private var appleDeviceEndpoint: APNSDeviceEndpoint
-    private var accountEndpoint: AccountEnpoint
-    private var tokenEndpoint: TokenEndpoint
-    private var messageEndpoint: MessageEndpoint
-    private var pubsubEndpoint: APIEndpoint
-    private let urlSessionDelegate = URLSessionDelegate()
+    fileprivate var appleDeviceEndpoint: APNSDeviceEndpoint
+    fileprivate var accountEndpoint: AccountEnpoint
+    fileprivate var tokenEndpoint: TokenEndpoint
+    fileprivate var messageEndpoint: MessageEndpoint
+	fileprivate var pubsubEndpoint: APIEndpoint
+    fileprivate let urlSessionDelegate = URLSessionDelegate()
     
     
     /**
@@ -84,9 +84,9 @@ public class Client: NSObject {
      
      - Returns: A new `Client`
      */
-    public init(baseUrl: NSURL, urlSessionConfiguration: NSURLSessionConfiguration = NSURLSessionConfiguration.defaultSessionConfiguration(),account: Account?) {
+    public init(baseUrl: URL, urlSessionConfiguration: URLSessionConfiguration = URLSessionConfiguration.default,account: Account?) {
         self.baseUrl = baseUrl
-        self.urlSession = NSURLSession(configuration: urlSessionConfiguration, delegate: urlSessionDelegate, delegateQueue: nil)
+        self.urlSession = URLSession(configuration: urlSessionConfiguration, delegate: urlSessionDelegate, delegateQueue: nil)
         self.account = account
         self.appleDeviceEndpoint = APNSDeviceEndpoint(baseUrl: self.baseUrl)
         self.accountEndpoint = AccountEnpoint(baseUrl: self.baseUrl)
@@ -106,7 +106,7 @@ public class Client: NSObject {
         - email: Optional email address. Useful for future password resets
         - completion: called once an account is created or an error occurs.
     */
-    public func registerNewUser(username: String, password: String, email: String?, completion: (account: Account?,error: NSError?) -> Void) {
+    open func registerNewUser(_ username: String, password: String, email: String?, completion: @escaping (_ account: Account?,_ error: NSError?) -> Void) {
         do {
             let request = try self.accountEndpoint.postRequest(username , password: password, email: email)
             self.startDataTask(request, completionHandler: { (data, response, error) -> Void in
@@ -118,13 +118,13 @@ public class Client: NSObject {
                     error = err
                 }
                 
-                self.callbackQueue.addOperationWithBlock({ () -> Void in
-                    completion(account: account,error: error)
+                self.callbackQueue.addOperation({ () -> Void in
+                    completion(account,error)
                 })
             })
         } catch let err as NSError {
-            self.callbackQueue.addOperationWithBlock({ () -> Void in
-                completion(account: nil, error: err)
+            self.callbackQueue.addOperation({ () -> Void in
+                completion(nil, err)
             })
         }
         
@@ -141,7 +141,7 @@ public class Client: NSObject {
         - deviceID: Optional id to identify the device by
         - compltion: The completion closure called once a device is returned or there is an error
     */
-    public func registerDevice(APNSToken: String, name: String?, deviceID: String?, completion: (device: Device?, error: NSError?) -> Void) {
+    open func registerDevice(_ APNSToken: String, name: String?, deviceID: String?, completion: @escaping (_ device: Device?, _ error: Error?) -> Void) {
         do {
             let request = try self.appleDeviceEndpoint.postRequest(APNSToken, name: name, deviceID: deviceID, serverID: nil)
             self.startDataTask(request, completionHandler: { (responseData, response, responseError) -> Void in
@@ -154,13 +154,13 @@ public class Client: NSObject {
                 }
                 
                 
-                self.callbackQueue.addOperationWithBlock({ () -> Void in
-                    completion(device: device, error: error)
+                self.callbackQueue.addOperation({ () -> Void in
+                    completion(device, error)
                 })
             })
         } catch let err as NSError {
-            self.callbackQueue.addOperationWithBlock({ () -> Void in
-                completion(device: nil, error: err)
+            self.callbackQueue.addOperation({ () -> Void in
+                completion(nil, err)
             })
         }
         
@@ -175,7 +175,7 @@ public class Client: NSObject {
         - deviceID: Optional other id to call the device
         - completion: Called once the update is complete or there is an error
     */
-    public func updateDevice(serverID: String, APNSToken: String, name: String?, deviceID: String?, completion: (device: Device?, error: NSError?) -> Void) {
+    open func updateDevice(_ serverID: String, APNSToken: String, name: String?, deviceID: String?, completion: @escaping (_ device: Device?, _ error: Error?) -> Void) {
         
         do {
             let request = try self.appleDeviceEndpoint.putRequest(APNSToken, name: name, deviceID: deviceID, serverID: serverID)
@@ -189,13 +189,13 @@ public class Client: NSObject {
                 }
                 
                 
-                self.callbackQueue.addOperationWithBlock({ () -> Void in
-                    completion(device: device, error: error)
+                self.callbackQueue.addOperation({ () -> Void in
+                    completion(device, error)
                 })
             })
         } catch let err as NSError {
-            self.callbackQueue.addOperationWithBlock({ () -> Void in
-                completion(device: nil, error: err)
+            self.callbackQueue.addOperation({ () -> Void in
+                completion(nil, err)
             })
         }
         
@@ -211,7 +211,7 @@ public class Client: NSObject {
         - name: Optional name of the token for managing tokens later
         - completion: Called once there is a valid token or there is an error
     */
-    public func createToken(id:String ,name:String?, completion: (token: Token?, error: NSError?) -> Void ) {
+    open func createToken(_ id:String ,name:String?, completion: @escaping (_ token: Token?, _ error: Error?) -> Void ) {
         do {
             let request = try self.tokenEndpoint.postRequest(id , name: name)
             self.startDataTask(request, completionHandler: { (responseData, response, responseError) -> Void in
@@ -223,13 +223,13 @@ public class Client: NSObject {
                     error = err
                 }
                 
-                self.callbackQueue.addOperationWithBlock({ () -> Void in
-                    completion(token: token, error: error)
+                self.callbackQueue.addOperation({ () -> Void in
+                    completion(token, error)
                 })
             })
         } catch let err as NSError {
-            self.callbackQueue.addOperationWithBlock({ () -> Void in
-                completion(token: nil, error: err)
+            self.callbackQueue.addOperation({ () -> Void in
+                completion(nil, err)
             })
         }
         
@@ -242,7 +242,7 @@ public class Client: NSObject {
         - id: Optional id. Pass if you want only a specific token. If none is passed it fetches all tokens
         - completion: The tokens from the server or an error
      */
-    public func tokens(id:String?, completion:(tokens: [Token]?, error: NSError?) -> Void) {
+    open func tokens(_ id:String?, completion:@escaping (_ tokens: [Token]?, _ error: Error?) -> Void) {
         do {
             let request = try self.tokenEndpoint.getRequest(id)
             self.startDataTask(request, completionHandler: { (responseData, response, responseError) -> Void in
@@ -254,13 +254,13 @@ public class Client: NSObject {
                     error = err
                 }
                 
-                self.callbackQueue.addOperationWithBlock({ () -> Void in
-                    completion(tokens: tokens, error: error)
+                self.callbackQueue.addOperation({ () -> Void in
+                    completion(tokens, error)
                 })
             })
         } catch let err as NSError {
-            self.callbackQueue.addOperationWithBlock({ () -> Void in
-                completion(tokens: nil, error: err)
+            self.callbackQueue.addOperation({ () -> Void in
+                completion(nil, err)
             })
         }
         
@@ -273,25 +273,25 @@ public class Client: NSObject {
         - id: The token string, e.g. 852e1c575a8f86b9198d4c13ecccac3634873859
         - completion: The closure called on completion and any error if encountered.
      */
-    public func revokeToken(id:String, completion:(error: NSError?) -> Void) {
+    open func revokeToken(_ id:String, completion:@escaping (_ error: Error?) -> Void) {
         do {
             let reqeust = try self.tokenEndpoint.deleteRequest(id)
             self.startDataTask(reqeust, completionHandler: { [weak self] (data, response, error) -> Void in
-                self?.callbackQueue.addOperationWithBlock({ () -> Void in
-                    completion(error: error)
+                self?.callbackQueue.addOperation({ () -> Void in
+                    completion(error)
                 })
             })
         } catch let error as NSError {
-            self.callbackQueue.addOperationWithBlock({ () -> Void in
-                completion(error: error)
+            self.callbackQueue.addOperation({ () -> Void in
+                completion(error)
             })
         }
     }
 
 // MARK: Message
     /// The url for the message endpoint for this client
-    public func messageEndpont() -> NSURL {
-        return self.baseUrl.URLByAppendingPathComponent("\(Endpoint.Messages.rawValue)/")!
+    open func messageEndpont() -> URL {
+        return self.baseUrl.appendingPathComponent("\(Endpoint.messages.rawValue)/")
     }
     /**
      Sends a message object to initiate a push. If the message does not have a url then it will be sent to this client's message endpoint otherwise that url is used.
@@ -300,7 +300,7 @@ public class Client: NSObject {
         - message: The message object to be sent
         - completion: Called once the message object is returned from teh the server or an error
      */
-    public func sendMessage(message:Message, completion: (message: Message?, error: NSError?) -> Void ) {
+    open func sendMessage(_ message:Message, completion: @escaping (_ message: Message?, _ error: Error?) -> Void ) {
         do {
             let request = try self.messageEndpoint.postRequest(message)
             
@@ -313,21 +313,21 @@ public class Client: NSObject {
                     error = err
                 }
                 
-                self.callbackQueue.addOperationWithBlock({ () -> Void in
-                    completion(message: message, error: error)
+                self.callbackQueue.addOperation({ () -> Void in
+                    completion(message, error)
                 })
             })
         } catch let error as NSError {
-            self.callbackQueue.addOperationWithBlock({ () -> Void in
-                completion(message: nil, error: error)
+            self.callbackQueue.addOperation({ () -> Void in
+                completion(nil, error)
             })
         }
     }
     
 // MARK: Pubsub (XEP-0357)
-    public func getPubsubEndpoint(completion:(pubsubEndpoint:String?,error:NSError?) -> Void) {
+    open func getPubsubEndpoint(_ completion: @escaping (_ pubsubEndpoint:String?,_ error:Error?) -> Void) {
         do {
-            let request = try self.pubsubEndpoint.request(Method.GET, endpoint: Endpoint.Pubsub.rawValue, jsonDictionary: nil)
+            let request = try self.pubsubEndpoint.request(.get, endpoint: Endpoint.pubsub.rawValue, jsonDictionary: nil)
             
             self.startDataTask(request,authenticate: false, completionHandler: { (responseData, response, responseError) -> Void in
                 var endpoint:String? = nil
@@ -336,22 +336,22 @@ public class Client: NSObject {
                     try self.pubsubEndpoint.handleError(responseData, response: response, error: error)
                     
                     guard let data = responseData else {
-                        throw NSError(domain: ErrorDomain.ChatsecurePush.rawValue, code: ErrorStatusCode.NoData.rawValue, userInfo: nil)
+                        throw NSError(domain: ErrorDomain.chatsecurePush.rawValue, code: ErrorStatusCode.noData.rawValue, userInfo: nil)
                     }
                     
-                    endpoint = try Deserializer.pubsub(data)
+                    endpoint = try Deserializer.pubsub(data: data)
                 } catch let err as NSError {
                     error = err
                 }
                 
-                self.callbackQueue.addOperationWithBlock({ () -> Void in
-                    completion(pubsubEndpoint: endpoint, error: error)
+                self.callbackQueue.addOperation({ () -> Void in
+                    completion(endpoint, error)
                 })
             })
             
         } catch let error as NSError {
-            self.callbackQueue.addOperationWithBlock({ () -> Void in
-                completion(pubsubEndpoint: nil, error: error)
+            self.callbackQueue.addOperation({ () -> Void in
+                completion(nil, error)
             })
         }
     }
@@ -366,14 +366,15 @@ public class Client: NSObject {
         - authenticate: default true. Whether to include the account authentication token
         - completionHandler: Called with result from server
      */
-    func startDataTask(request: NSMutableURLRequest, authenticate:Bool = true, completionHandler: ((NSData?, NSURLResponse?, NSError?) -> Void))
+    func startDataTask(_ request: MutableURLRequest, authenticate:Bool = true, completionHandler: @escaping ((Data?, URLResponse?, Error?) -> Void))
     {
         request.setValue("gzip;q=1.0,compress;q=0.5", forHTTPHeaderField: "Accept-Encoding")
         request.setValue("application/json", forHTTPHeaderField:"Accept")
-        if let token = self.account?.token where authenticate {
+        if let token = self.account?.token, authenticate {
             request.setValue("Token "+token, forHTTPHeaderField:"Authorization")
         }
-        let dataTask = self.urlSession.dataTaskWithRequest(request, completionHandler: completionHandler)
+        
+        let dataTask = self.urlSession.dataTask(with: request as! URLRequest, completionHandler: completionHandler)
         dataTask.resume()
     }
 }

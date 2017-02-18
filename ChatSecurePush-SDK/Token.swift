@@ -9,19 +9,19 @@
 import Foundation
 
 private enum TokenCodingSrings:String {
-    case TokenString = "tokenString"
-    case RegistrationID = "registrationID"
-    case DeviceType = "type"
-    case Name = "name"
-    case Expires = "expires"
+    case tokenString = "tokenString"
+    case registrationID = "registrationID"
+    case deviceType = "type"
+    case name = "name"
+    case expires = "expires"
 }
 
-public class Token: NSObject, NSCoding, NSCopying {
-    public let tokenString: String
-    public var expires:NSDate?
-    public var registrationID: String?
-    public var name: String?
-    public var type:DeviceKind = .unknown
+open class Token: NSObject, NSCoding, NSCopying {
+    open let tokenString: String
+    open var expires:Date?
+    open var registrationID: String?
+    open var name: String?
+    open var type:DeviceKind = .unknown
     
     public init (tokenString: String, type:DeviceKind, deviceID: String?) {
         self.tokenString = tokenString
@@ -30,33 +30,33 @@ public class Token: NSObject, NSCoding, NSCopying {
     }
     
     public required init(coder aDecoder: NSCoder) {
-        if let tokenString = aDecoder.decodeObjectForKey(TokenCodingSrings.TokenString.rawValue) as? String {
+        if let tokenString = aDecoder.decodeObject(forKey: TokenCodingSrings.tokenString.rawValue) as? String {
             self.tokenString = tokenString
         } else {
             self.tokenString = ""
         }
         
-        if let registrationID = aDecoder.decodeObjectForKey(TokenCodingSrings.RegistrationID.rawValue) as? String {
+        if let registrationID = aDecoder.decodeObject(forKey: TokenCodingSrings.registrationID.rawValue) as? String {
             self.registrationID = registrationID
         }
         
-        if let type = DeviceKind(rawValue: aDecoder.decodeIntegerForKey(TokenCodingSrings.DeviceType.rawValue)) {
+        if let type = DeviceKind(rawValue: aDecoder.decodeInteger(forKey: TokenCodingSrings.deviceType.rawValue)) {
             self.type = type
         }
         
-        self.name = aDecoder.decodeObjectForKey(TokenCodingSrings.Name.rawValue) as? String
-        self.expires = aDecoder.decodeObjectForKey(TokenCodingSrings.Expires.rawValue) as? NSDate
+        self.name = aDecoder.decodeObject(forKey: TokenCodingSrings.name.rawValue) as? String
+        self.expires = aDecoder.decodeObject(forKey: TokenCodingSrings.expires.rawValue) as? Date
     }
     
-    public func encodeWithCoder(aCoder: NSCoder) {
-        aCoder.encodeObject(self.tokenString, forKey: TokenCodingSrings.TokenString.rawValue)
-        aCoder.encodeObject(self.registrationID, forKey: TokenCodingSrings.RegistrationID.rawValue)
-        aCoder.encodeObject(self.name, forKey: TokenCodingSrings.Name.rawValue)
-        aCoder.encodeInteger(self.type.rawValue, forKey: TokenCodingSrings.DeviceType.rawValue)
-        aCoder.encodeObject(self.expires, forKey: TokenCodingSrings.Expires.rawValue)
+    open func encode(with aCoder: NSCoder) {
+        aCoder.encode(self.tokenString, forKey: TokenCodingSrings.tokenString.rawValue)
+        aCoder.encode(self.registrationID, forKey: TokenCodingSrings.registrationID.rawValue)
+        aCoder.encode(self.name, forKey: TokenCodingSrings.name.rawValue)
+        aCoder.encode(self.type.rawValue, forKey: TokenCodingSrings.deviceType.rawValue)
+        aCoder.encode(self.expires, forKey: TokenCodingSrings.expires.rawValue)
     }
     
-    public func copyWithZone(zone: NSZone) -> AnyObject {
+    open func copy(with zone: NSZone?) -> Any {
         let newToken = Token(tokenString: self.tokenString, type: self.type, deviceID: self.registrationID)
         newToken.name = self.name
         newToken.expires = self.expires

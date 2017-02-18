@@ -10,46 +10,46 @@ import Foundation
 
 
 class TokenEndpoint: APIEndpoint {
-    func postRequest(id:String ,name:String?) throws -> NSMutableURLRequest {
+    func postRequest(_ id:String ,name:String?) throws -> NSMutableURLRequest {
         var parameters = [
             jsonKeys.apnsDeviceKey.rawValue: id
         ]
         parameters[jsonKeys.name.rawValue] = name
         
-        let request = try self.request(Method.POST, endpoint: Endpoint.Tokens.rawValue, jsonDictionary: parameters)
+        let request = try self.request(.post, endpoint: Endpoint.tokens.rawValue, jsonDictionary: parameters)
         return request
     }
     
-    func getRequest(id:String?) throws -> NSMutableURLRequest {
-        let request = try self.request(.GET, endpoint: Endpoint.Tokens.rawValue, jsonDictionary: nil)
+    func getRequest(_ id:String?) throws -> NSMutableURLRequest {
+        let request = try self.request(.get, endpoint: Endpoint.tokens.rawValue, jsonDictionary: nil)
         if let tokenID = id {
-            request.URL = request.URL?.URLByAppendingPathComponent(tokenID)
+            request.url = request.url?.appendingPathComponent(tokenID)
         }
         
         return request
     }
     
-    func deleteRequest(id:String) throws -> NSMutableURLRequest {
-        let request = try self.request(.DELETE, endpoint: Endpoint.Tokens.rawValue, jsonDictionary: nil)
-        request.URL = request.URL?.URLByAppendingPathComponent("\(id)/")
+    func deleteRequest(_ id:String) throws -> NSMutableURLRequest {
+        let request = try self.request(.delete, endpoint: Endpoint.tokens.rawValue, jsonDictionary: nil)
+        request.url = request.url?.appendingPathComponent("\(id)/")
         return request
     }
     
-    func tokenFromResponse(responseData: NSData?, response: NSURLResponse?, error: NSError?) throws -> Token {
+    func tokenFromResponse(_ responseData: Data?, response: URLResponse?, error: Error?) throws -> Token {
         try self.handleError(responseData, response: response, error: error)
         
         guard let data = responseData else {
-            throw NSError(domain: ErrorDomain.ChatsecurePush.rawValue, code: ErrorStatusCode.NoData.rawValue, userInfo: nil)
+            throw NSError(domain: ErrorDomain.chatsecurePush.rawValue, code: ErrorStatusCode.noData.rawValue, userInfo: nil)
         }
         
         return try Deserializer.token(data)
     }
     
-    func tokensFromResponse(responseData: NSData?, response: NSURLResponse?, error: NSError?) throws -> [Token] {
+    func tokensFromResponse(_ responseData: Data?, response: URLResponse?, error: Error?) throws -> [Token] {
         try self.handleError(responseData, response: response, error: error)
         
         guard let data = responseData else {
-            throw NSError(domain: ErrorDomain.ChatsecurePush.rawValue, code: ErrorStatusCode.NoData.rawValue, userInfo: nil)
+            throw NSError(domain: ErrorDomain.chatsecurePush.rawValue, code: ErrorStatusCode.noData.rawValue, userInfo: nil)
         }
         
         return try Deserializer.tokens(data)

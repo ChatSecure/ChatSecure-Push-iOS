@@ -10,8 +10,8 @@ import Foundation
 import URLMock
 import ChatSecure_Push_iOS
 
-let baseURl = NSURL(string: "http://push.chatsecure/api/1/")!
-let otherMessageURL = NSURL(string: "http://example.com/api/1/messages/")!
+let baseURl = URL(string: "http://push.chatsecure/api/1/")!
+let otherMessageURL = URL(string: "http://example.com/api/1/messages/")!
 let username = "test"
 let password = "password"
 let email = "email@email.com"
@@ -40,11 +40,11 @@ func setupURLMock() {
     postHeader["Authorization"] = "Token "+authToken
     baseHeader["Authorization"] = postHeader["Authorization"]
     
-    let accountURL = baseURl.URLByAppendingPathComponent("accounts/")
+    let accountURL = baseURl.appendingPathComponent("accounts/")
     
     
     ///Create Account Request
-    let createAccountRequest = UMKMockURLProtocol.expectMockHTTPPostRequestWithURL(accountURL, requestJSON: ["username":username,
+    let createAccountRequest = UMKMockURLProtocol.expectMockHTTPPostRequest(with: accountURL, requestJSON: ["username":username,
         "password":password,
         "email":email],
         responseStatusCode: 200,
@@ -62,8 +62,8 @@ func setupURLMock() {
     
     
     ///Create Device Request
-    let deviceURL = baseURl.URLByAppendingPathComponent("device/apns/")
-    let deviceRequest = UMKMockURLProtocol.expectMockHTTPPostRequestWithURL(deviceURL, requestJSON: ["name":deviceName,
+    let deviceURL = baseURl.appendingPathComponent("device/apns/")
+    let deviceRequest = UMKMockURLProtocol.expectMockHTTPPostRequest(with: deviceURL, requestJSON: ["name":deviceName,
         "registration_id":apnsToken],
         responseStatusCode: 200,
         responseJSON: [
@@ -78,9 +78,9 @@ func setupURLMock() {
     
     
     ///Create Token Request
-    let tokenURL = baseURl.URLByAppendingPathComponent("tokens/")
+    let tokenURL = baseURl.appendingPathComponent("tokens/")
     
-    let tokenRequest = UMKMockURLProtocol.expectMockHTTPPostRequestWithURL(tokenURL, requestJSON: [
+    let tokenRequest = UMKMockURLProtocol.expectMockHTTPPostRequest(with: tokenURL, requestJSON: [
         "name":tokenName,
         "apns_device":apnsToken],
         responseStatusCode: 200,
@@ -95,18 +95,18 @@ func setupURLMock() {
     tokenRequest.headers.updateValue("110", forKey: "Content-Length")
     tokenRequest.checksHeadersWhenMatching = true
     
-    let getSingleTokenRequest = UMKPatternMatchingMockRequest(URLPattern: tokenURL.absoluteString.stringByAppendingString(":id"))
+    let getSingleTokenRequest = UMKPatternMatchingMockRequest(urlPattern: tokenURL.absoluteString + ":id")
     
-    getSingleTokenRequest.HTTPMethods = Set(["GET","DELETE"])
+    getSingleTokenRequest.httpMethods = Set(["GET","DELETE"])
     getSingleTokenRequest.responderGenerationBlock = {request, parameters in
         
-        if (request.HTTPMethod == "DELETE") {
+        if (request.httpMethod == "DELETE") {
             return UMKMockHTTPResponder(statusCode: 204, body: nil);
         }
         
-        assert(request.valueForHTTPHeaderField("Authorization") != nil)
+        assert(request.value(forHTTPHeaderField: "Authorization") != nil)
         
-        var data:NSData?
+        var data:Data?
         var json:[String:AnyObject]?
         if let id = parameters["id"] {
             var t = Token.randomToken()
@@ -121,13 +121,13 @@ func setupURLMock() {
                     results.append(json)
                 }
             }
-            json = ["count": count, "results": results]
+            json = ["count": count as AnyObject, "results": results as AnyObject]
             
         }
         
         if let j = json {
             do {
-               data = try NSJSONSerialization.dataWithJSONObject(j, options: NSJSONWritingOptions())
+               data = try JSONSerialization.data(withJSONObject: j, options: JSONSerialization.WritingOptions())
             } catch {
                 print("JSON Error")
             }
@@ -136,8 +136,8 @@ func setupURLMock() {
         
         return UMKMockHTTPResponder(statusCode: 200, body: data);
     }
-    let allTokenRequest = UMKPatternMatchingMockRequest(URLPattern: tokenURL.absoluteString)
-    allTokenRequest.HTTPMethods = getSingleTokenRequest.HTTPMethods
+    let allTokenRequest = UMKPatternMatchingMockRequest(urlPattern: tokenURL.absoluteString)
+    allTokenRequest.httpMethods = getSingleTokenRequest.httpMethods
     allTokenRequest.responderGenerationBlock = getSingleTokenRequest.responderGenerationBlock
 
     
@@ -146,22 +146,22 @@ func setupURLMock() {
     
     
     /// Message Request
-    let messageURL = baseURl.URLByAppendingPathComponent("messages/")
+    let messageURL = baseURl.appendingPathComponent("messages/")
     
-    let request = UMKPatternMatchingMockRequest(URLPattern: messageURL.absoluteString)
+    let request = UMKPatternMatchingMockRequest(urlPattern: messageURL.absoluteString)
     let block:UMKParameterizedResponderGenerationBlock = {request, parameters in
         
-        assert(request.valueForHTTPHeaderField("Authorization") == nil)
+        assert(request.value(forHTTPHeaderField: "Authorization") == nil)
         
-        let data = request.umk_HTTPBodyData()!
-        let jsonDict = try! NSJSONSerialization.JSONObjectWithData(data, options: NSJSONReadingOptions()) as! [String : AnyObject]
-        let message = try! Deserializer.messageFromServerDictionary(jsonDict, url: request.URL!)
+        let data = (request as NSURLRequest).umk_HTTPBodyData()!
+        let jsonDict = try! JSONSerialization.jsonObject(with: data, options: JSONSerialization.ReadingOptions()) as! [String : AnyObject]
+        let message = try! Deserializer.messageFromServerDictionary(jsonDict, url: request.url!)
         
         if (message.token == errorToken) {
             return UMKMockHTTPResponder(statusCode: 404)
         } else {
             //Return post data back to client
-            return UMKMockHTTPResponder(statusCode: 200, body: request.umk_HTTPBodyData());
+            return UMKMockHTTPResponder(statusCode: 200, body: (request as NSURLRequest).umk_HTTPBodyData());
         }
         
         
@@ -169,7 +169,7 @@ func setupURLMock() {
     request.responderGenerationBlock = block
     UMKMockURLProtocol.expectMockRequest(request)
     
-    let otherServerRequest = UMKPatternMatchingMockRequest(URLPattern: otherMessageURL.absoluteString)
+    let otherServerRequest = UMKPatternMatchingMockRequest(urlPattern: otherMessageURL.absoluteString)
     otherServerRequest.responderGenerationBlock = block
     UMKMockURLProtocol.expectMockRequest(otherServerRequest)
 }

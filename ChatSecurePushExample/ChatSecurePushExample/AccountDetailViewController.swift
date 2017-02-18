@@ -22,7 +22,7 @@ class AccountDetailViewController: UIViewController {
     @IBOutlet var messageTokenTextField: UITextField?
     
     
-    let client = Client(baseUrl: NSURL(string: urlString)!, urlSessionConfiguration: NSURLSessionConfiguration.defaultSessionConfiguration(), account: nil)
+    let client = Client(baseUrl: URL(string: urlString)!, urlSessionConfiguration: URLSessionConfiguration.default, account: nil)
     
     override func viewDidLoad() {
         
@@ -33,13 +33,13 @@ class AccountDetailViewController: UIViewController {
                     
                     
                     if let newAccount = account {
-                        dispatch_async(dispatch_get_main_queue(), { () -> Void in
+                        DispatchQueue.main.async(execute: { () -> Void in
                             self.accountStatusLabel?.text = "Created Account: \(newAccount.username)"
                         })
                         
                         self.account = newAccount
                         self.client.account = newAccount
-                        if let apnsToken = (UIApplication.sharedApplication().delegate as? AppDelegate)?.apnsToken {
+                        if let apnsToken = (UIApplication.shared.delegate as? AppDelegate)?.apnsToken {
                             self.client.registerDevice(apnsToken, name: "I'm just a test device", deviceID: nil, completion: { (device, error) -> Void in
                                 self.device = device
                             })
@@ -50,7 +50,7 @@ class AccountDetailViewController: UIViewController {
         }
     }
     
-    @IBAction func sendMessageButtonPressed(sender: AnyObject?) {
+    @IBAction func sendMessageButtonPressed(_ sender: AnyObject?) {
         if let token = self.messageTokenTextField?.text {
             let message = Message(token: token, url:nil, data: nil)
             self.client.sendMessage(message, completion: { (msg, error) -> Void in
@@ -60,15 +60,15 @@ class AccountDetailViewController: UIViewController {
         
     }
     
-    @IBAction func whitelistTokenButtonPressed(sender: AnyObject?) {
-        if let _ = (UIApplication.sharedApplication().delegate as? AppDelegate)?.apnsToken {
+    @IBAction func whitelistTokenButtonPressed(_ sender: AnyObject?) {
+        if let _ = (UIApplication.shared.delegate as? AppDelegate)?.apnsToken {
             if let id = self.device?.id {
                 self.client.createToken(id, name: "I'm just a test token", completion: { (token, error) -> Void in
                     if let tempToken = token {
                         print("Token: \(token)")
-                        dispatch_async(dispatch_get_main_queue(), { () -> Void in
+                        DispatchQueue.main.async(execute: { () -> Void in
                             let activityVewController = UIActivityViewController(activityItems: [tempToken.tokenString], applicationActivities: nil)
-                            self.presentViewController(activityVewController, animated: true, completion: nil)
+                            self.present(activityVewController, animated: true, completion: nil)
                         })
                     }
                     
