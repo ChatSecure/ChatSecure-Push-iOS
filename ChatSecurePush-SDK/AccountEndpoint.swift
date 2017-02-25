@@ -17,10 +17,15 @@ class AccountEnpoint: APIEndpoint {
             jsonKeys.username.rawValue : username,
             jsonKeys.password.rawValue : password,
         ]
-        
-        parameters[jsonKeys.email.rawValue] = email
-        
+        if let email = email {
+            parameters[jsonKeys.email.rawValue] = email
+        }
         return try self.request(.post, endpoint:Endpoint.accounts.rawValue, jsonDictionary:parameters)
+    }
+    
+    func deleteRequest(_ account: Account) throws -> NSMutableURLRequest {
+        let endpoint = "\(Endpoint.accounts.rawValue)/\(account.username)"
+        return try self.request(.delete, endpoint:endpoint, jsonDictionary:nil)
     }
     
     func accountFromResponse(_ responseData: Data?, response: URLResponse?, error: NSError?) throws -> Account {

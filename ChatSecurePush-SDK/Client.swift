@@ -130,6 +130,37 @@ open class Client: NSObject {
         
     }
     
+    /** Careful, this will delete ALL data on the server. Must be logged in first. */
+    open func unregister(_ completion: @escaping (_ success: Bool, _ error: NSError?) -> Void) {
+        guard let accountToDelete = account else {
+            self.callbackQueue.addOperation({ () -> Void in
+                completion(false, NSError.error(.creatingRequest, userInfo: nil))
+            })
+            return
+        }
+        do {
+            let request = try self.accountEndpoint.deleteRequest(accountToDelete)
+            self.startDataTask(request, completionHandler: { (data, response, error) in
+                var result = true
+                var outError:NSError? = nil
+                do {
+                    try self.accountEndpoint.handleError(data, response: response, error: error)
+                } catch let err as NSError {
+                    outError = err
+                    result = false
+                }
+                self.callbackQueue.addOperation({ () -> Void in
+                    completion(result, outError)
+                })
+            })
+        } catch let err as NSError {
+            self.callbackQueue.addOperation({ () -> Void in
+                completion(false, err)
+            })
+        }        
+    }
+    
+    
 // MARK: Device
     
     /**
