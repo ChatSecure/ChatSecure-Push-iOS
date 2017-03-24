@@ -18,7 +18,7 @@ class APIEndpoint {
         self.baseURL = baseUrl
     }
     
-    func request(_ method: Method, endpoint: String, jsonDictionary:[String: Any]?) throws -> NSMutableURLRequest {
+    func request(_ method: Method, endpoint: String, jsonDictionary:[String: Any]?) throws -> URLRequest {
         
         return try APIEndpoint.request(method.rawValue, URL: self.url(endpoint), jsonDictionary: jsonDictionary)
     }
@@ -56,8 +56,8 @@ class APIEndpoint {
         }
     }
     
-    class func request(_ method: String, URL:Foundation.URL, jsonDictionary:[String:Any]?) throws -> NSMutableURLRequest {
-        let request = NSMutableURLRequest(url: URL)
+    class func request(_ method: String, URL:Foundation.URL, jsonDictionary:[String:Any]?) throws -> URLRequest {
+        var request = URLRequest(url: URL)
         request.httpMethod = method
         
         if let json = jsonDictionary {

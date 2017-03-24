@@ -17,7 +17,7 @@ class MessageEndpoint:APIEndpoint {
      - Parameter message: The message to be serialized and add to the mutableURLRequest
      - Returns: A mutableURLRequest that can be used to post to the message endpoint
      */
-    func postRequest(_ message:Message) throws -> NSMutableURLRequest {
+    func postRequest(_ message:Message) throws -> URLRequest {
         let jsonDictionary = try Serializer.jsonValue(message)
         
         if let url = message.url {

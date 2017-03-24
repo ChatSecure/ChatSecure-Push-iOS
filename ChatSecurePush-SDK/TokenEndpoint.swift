@@ -10,7 +10,7 @@ import Foundation
 
 
 class TokenEndpoint: APIEndpoint {
-    func postRequest(_ id:String ,name:String?) throws -> NSMutableURLRequest {
+    func postRequest(_ id:String ,name:String?) throws -> URLRequest {
         var parameters = [
             jsonKeys.apnsDeviceKey.rawValue: id
         ]
@@ -20,8 +20,8 @@ class TokenEndpoint: APIEndpoint {
         return request
     }
     
-    func getRequest(_ id:String?) throws -> NSMutableURLRequest {
-        let request = try self.request(.get, endpoint: Endpoint.tokens.rawValue, jsonDictionary: nil)
+    func getRequest(_ id:String?) throws -> URLRequest {
+        var request = try self.request(.get, endpoint: Endpoint.tokens.rawValue, jsonDictionary: nil)
         if let tokenID = id {
             request.url = request.url?.appendingPathComponent(tokenID)
         }
@@ -29,8 +29,8 @@ class TokenEndpoint: APIEndpoint {
         return request
     }
     
-    func deleteRequest(_ id:String) throws -> NSMutableURLRequest {
-        let request = try self.request(.delete, endpoint: Endpoint.tokens.rawValue, jsonDictionary: nil)
+    func deleteRequest(_ id:String) throws -> URLRequest {
+        var request = try self.request(.delete, endpoint: Endpoint.tokens.rawValue, jsonDictionary: nil)
         request.url = request.url?.appendingPathComponent("\(id)/")
         return request
     }

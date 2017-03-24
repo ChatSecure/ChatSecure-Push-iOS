@@ -397,15 +397,16 @@ open class Client: NSObject {
         - authenticate: default true. Whether to include the account authentication token
         - completionHandler: Called with result from server
      */
-    func startDataTask(_ request: MutableURLRequest, authenticate:Bool = true, completionHandler: @escaping ((Data?, URLResponse?, Error?) -> Void))
+    func startDataTask(_ request: URLRequest, authenticate:Bool = true, completionHandler: @escaping ((Data?, URLResponse?, Error?) -> Void))
     {
-        request.setValue("gzip;q=1.0,compress;q=0.5", forHTTPHeaderField: "Accept-Encoding")
-        request.setValue("application/json", forHTTPHeaderField:"Accept")
+        var requestWithAuth = request
+        requestWithAuth.setValue("gzip;q=1.0,compress;q=0.5", forHTTPHeaderField: "Accept-Encoding")
+        requestWithAuth.setValue("application/json", forHTTPHeaderField:"Accept")
         if let token = self.account?.token, authenticate {
-            request.setValue("Token "+token, forHTTPHeaderField:"Authorization")
+            requestWithAuth.setValue("Token "+token, forHTTPHeaderField:"Authorization")
         }
         
-        let dataTask = self.urlSession.dataTask(with: request as! URLRequest, completionHandler: completionHandler)
+        let dataTask = self.urlSession.dataTask(with: requestWithAuth, completionHandler: completionHandler)
         dataTask.resume()
     }
 }
