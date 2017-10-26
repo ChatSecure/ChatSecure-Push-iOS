@@ -45,7 +45,7 @@ class APIEndpoint {
         }
         
         if(!acceptable) {
-            var userInfo : [AnyHashable: Any]?
+            var userInfo : [String: Any] = [:]
             if let data = responseData {
                 if let string = NSString(data: data, encoding: String.Encoding.utf8.rawValue) {
                     userInfo = [NSLocalizedDescriptionKey:string]

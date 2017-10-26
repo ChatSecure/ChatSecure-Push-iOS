@@ -9,12 +9,12 @@
 import Foundation
 
 
-open class Account: NSObject, NSCoding, NSCopying {
-    open let username: String
-    open var token: String?
-    open var email: String?
+@objc open class Account: NSObject, NSCoding, NSCopying {
+    @objc open let username: String
+    @objc open var token: String?
+    @objc open var email: String?
     
-    public init (username: String) {
+    @objc public init (username: String) {
         self.username = username
     }
     

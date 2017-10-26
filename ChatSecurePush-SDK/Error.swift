@@ -32,7 +32,7 @@ extension NSError {
      
      - Returns: A ChatSecure push error
      */
-    public class func error(_ code:ErrorStatusCode, userInfo: [AnyHashable: Any]?) -> NSError {
+    public class func error(_ code:ErrorStatusCode, userInfo: [String: Any]) -> NSError {
         return NSError(domain: ErrorDomain.chatsecurePush.rawValue, code: code.rawValue, userInfo: userInfo)
     }
 }

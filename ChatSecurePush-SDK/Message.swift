@@ -9,15 +9,15 @@
 import Foundation
 
 
-open class Message: NSObject, NSCoding, NSCopying {
+@objc open class Message: NSObject, NSCoding, NSCopying {
     /// The token string
-    open var token: String
-    open var url: URL?
+    @objc open var token: String
+    @objc open var url: URL?
     
     /// Data needs to be a dictionary that can be serialized as JSON
-    open var data: [String:Any]?
+    @objc open var data: [String:Any]?
     
-    public init(token: String, url:URL?, data: [String:Any]?){
+    @objc public init(token: String, url:URL?, data: [String:Any]?){
         self.token = token
         self.url = url
         self.data = data

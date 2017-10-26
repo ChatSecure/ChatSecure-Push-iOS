@@ -16,14 +16,14 @@ private enum TokenCodingSrings:String {
     case expires = "expires"
 }
 
-open class Token: NSObject, NSCoding, NSCopying {
-    open let tokenString: String
-    open var expires:Date?
-    open var registrationID: String?
-    open var name: String?
-    open var type:DeviceKind = .unknown
+@objc open class Token: NSObject, NSCoding, NSCopying {
+    @objc open let tokenString: String
+    @objc open var expires:Date?
+    @objc open var registrationID: String?
+    @objc open var name: String?
+    @objc open var type:DeviceKind = .unknown
     
-    public init (tokenString: String, type:DeviceKind, deviceID: String?) {
+    @objc public init (tokenString: String, type:DeviceKind, deviceID: String?) {
         self.tokenString = tokenString
         self.registrationID = deviceID
         self.type = type

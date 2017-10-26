@@ -56,15 +56,15 @@ public enum jsonKeys: String {
   - The methods that involve network operations will return the HTTP status code in the range 100...500
   - Internal errors or non network errors will be in the 600 and greater range and are documented in Error.swift
 */
-open class Client: NSObject {
+@objc open class Client: NSObject {
     /// The API URL in the format in the format `https://example.com/api/v1/`
-    open let baseUrl: URL
+    @objc open let baseUrl: URL
     /// The url session to be used for calls to the server
-    open let urlSession: URLSession
+    @objc open let urlSession: URLSession
     /// This is the queue where callbacks from the `Client` are executed on
-    open var callbackQueue = OperationQueue()
+    @objc open var callbackQueue = OperationQueue()
     /// The account containing the data need for server authentication. This needs to be set after `registerNewUser` with the returned account.
-    open var account: Account?
+    @objc open var account: Account?
     
     fileprivate var appleDeviceEndpoint: APNSDeviceEndpoint
     fileprivate var accountEndpoint: AccountEnpoint
@@ -84,7 +84,7 @@ open class Client: NSObject {
      
      - Returns: A new `Client`
      */
-    public init(baseUrl: URL, urlSessionConfiguration: URLSessionConfiguration = URLSessionConfiguration.default,account: Account?) {
+    @objc public init(baseUrl: URL, urlSessionConfiguration: URLSessionConfiguration = URLSessionConfiguration.default,account: Account?) {
         self.baseUrl = baseUrl
         self.urlSession = URLSession(configuration: urlSessionConfiguration, delegate: urlSessionDelegate, delegateQueue: nil)
         self.account = account
@@ -106,7 +106,7 @@ open class Client: NSObject {
         - email: Optional email address. Useful for future password resets
         - completion: called once an account is created or an error occurs.
     */
-    open func registerNewUser(_ username: String, password: String, email: String?, completion: @escaping (_ account: Account?,_ error: NSError?) -> Void) {
+    @objc open func registerNewUser(_ username: String, password: String, email: String?, completion: @escaping (_ account: Account?,_ error: NSError?) -> Void) {
         do {
             let request = try self.accountEndpoint.postRequest(username , password: password, email: email)
             self.startDataTask(request, completionHandler: { (data, response, error) -> Void in
@@ -131,10 +131,10 @@ open class Client: NSObject {
     }
     
     /** Careful, this will delete ALL data on the server. Must be logged in first. */
-    open func unregister(_ completion: @escaping (_ success: Bool, _ error: NSError?) -> Void) {
+    @objc open func unregister(_ completion: @escaping (_ success: Bool, _ error: NSError?) -> Void) {
         guard let accountToDelete = account else {
             self.callbackQueue.addOperation({ () -> Void in
-                completion(false, NSError.error(.creatingRequest, userInfo: nil))
+                completion(false, NSError.error(.creatingRequest, userInfo: [:]))
             })
             return
         }
@@ -172,7 +172,7 @@ open class Client: NSObject {
         - deviceID: Optional id to identify the device by
         - compltion: The completion closure called once a device is returned or there is an error
     */
-    open func registerDevice(_ APNSToken: String, name: String?, deviceID: String?, completion: @escaping (_ device: Device?, _ error: Error?) -> Void) {
+    @objc open func registerDevice(_ APNSToken: String, name: String?, deviceID: String?, completion: @escaping (_ device: Device?, _ error: Error?) -> Void) {
         do {
             let request = try self.appleDeviceEndpoint.postRequest(APNSToken, name: name, deviceID: deviceID, serverID: nil)
             self.startDataTask(request, completionHandler: { (responseData, response, responseError) -> Void in
@@ -206,7 +206,7 @@ open class Client: NSObject {
         - deviceID: Optional other id to call the device
         - completion: Called once the update is complete or there is an error
     */
-    open func updateDevice(_ serverID: String, APNSToken: String, name: String?, deviceID: String?, completion: @escaping (_ device: Device?, _ error: Error?) -> Void) {
+    @objc open func updateDevice(_ serverID: String, APNSToken: String, name: String?, deviceID: String?, completion: @escaping (_ device: Device?, _ error: Error?) -> Void) {
         
         do {
             let request = try self.appleDeviceEndpoint.putRequest(APNSToken, name: name, deviceID: deviceID, serverID: serverID)
@@ -242,7 +242,7 @@ open class Client: NSObject {
         - name: Optional name of the token for managing tokens later
         - completion: Called once there is a valid token or there is an error
     */
-    open func createToken(_ id:String ,name:String?, completion: @escaping (_ token: Token?, _ error: Error?) -> Void ) {
+    @objc open func createToken(_ id:String ,name:String?, completion: @escaping (_ token: Token?, _ error: Error?) -> Void ) {
         do {
             let request = try self.tokenEndpoint.postRequest(id , name: name)
             self.startDataTask(request, completionHandler: { (responseData, response, responseError) -> Void in
@@ -273,7 +273,7 @@ open class Client: NSObject {
         - id: Optional id. Pass if you want only a specific token. If none is passed it fetches all tokens
         - completion: The tokens from the server or an error
      */
-    open func tokens(_ id:String?, completion:@escaping (_ tokens: [Token]?, _ error: Error?) -> Void) {
+    @objc open func tokens(_ id:String?, completion:@escaping (_ tokens: [Token]?, _ error: Error?) -> Void) {
         do {
             let request = try self.tokenEndpoint.getRequest(id)
             self.startDataTask(request, completionHandler: { (responseData, response, responseError) -> Void in
@@ -304,7 +304,7 @@ open class Client: NSObject {
         - id: The token string, e.g. 852e1c575a8f86b9198d4c13ecccac3634873859
         - completion: The closure called on completion and any error if encountered.
      */
-    open func revokeToken(_ id:String, completion:@escaping (_ error: Error?) -> Void) {
+    @objc open func revokeToken(_ id:String, completion:@escaping (_ error: Error?) -> Void) {
         do {
             let reqeust = try self.tokenEndpoint.deleteRequest(id)
             self.startDataTask(reqeust, completionHandler: { [weak self] (data, response, error) -> Void in
@@ -321,7 +321,7 @@ open class Client: NSObject {
 
 // MARK: Message
     /// The url for the message endpoint for this client
-    open func messageEndpont() -> URL {
+    @objc open func messageEndpont() -> URL {
         return self.baseUrl.appendingPathComponent("\(Endpoint.messages.rawValue)/")
     }
     /**
@@ -331,7 +331,7 @@ open class Client: NSObject {
         - message: The message object to be sent
         - completion: Called once the message object is returned from teh the server or an error
      */
-    open func sendMessage(_ message:Message, completion: @escaping (_ message: Message?, _ error: Error?) -> Void ) {
+    @objc open func sendMessage(_ message:Message, completion: @escaping (_ message: Message?, _ error: Error?) -> Void ) {
         do {
             let request = try self.messageEndpoint.postRequest(message)
             
@@ -356,7 +356,7 @@ open class Client: NSObject {
     }
     
 // MARK: Pubsub (XEP-0357)
-    open func getPubsubEndpoint(_ completion: @escaping (_ pubsubEndpoint:String?,_ error:Error?) -> Void) {
+    @objc open func getPubsubEndpoint(_ completion: @escaping (_ pubsubEndpoint:String?,_ error:Error?) -> Void) {
         do {
             let request = try self.pubsubEndpoint.request(.get, endpoint: Endpoint.pubsub.rawValue, jsonDictionary: nil)
             

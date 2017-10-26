@@ -8,7 +8,7 @@
 
 import Foundation
 
-public enum DeviceKind:Int {
+@objc public enum DeviceKind:Int {
     case unknown  = 0
     case iOS     = 1
     case android = 2
@@ -22,18 +22,18 @@ public extension Data {
     }
 }
 
-open class Device: NSObject, NSCoding, NSCopying {
-    open var name: String?
-    open var id: String?
-    open var deviceID: String?
-    open var registrationID: String
-    open var active = true
-    open var deviceKind = DeviceKind.unknown
-    open let dateCreated: Date
+@objc open class Device: NSObject, NSCoding, NSCopying {
+    @objc open var name: String?
+    @objc open var id: String?
+    @objc open var deviceID: String?
+    @objc open var registrationID: String
+    @objc open var active = true
+    @objc open var deviceKind = DeviceKind.unknown
+    @objc open let dateCreated: Date
     
     
     
-    public init (registrationID: String,dateCreated: Date, name: String?, deviceID: String?, id: String?) {
+    @objc public init (registrationID: String,dateCreated: Date, name: String?, deviceID: String?, id: String?) {
         self.name = name
         self.dateCreated = dateCreated
         self.registrationID = registrationID
