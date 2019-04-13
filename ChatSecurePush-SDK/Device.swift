@@ -17,7 +17,7 @@ import Foundation
 public extension Data {
     
     //https://stackoverflow.com/questions/39075043/how-to-convert-data-to-hex-string-in-swift/40089462#40089462
-    public func hexString() -> String {
+    func hexString() -> String {
         return map { String(format: "%02hhx", $0) }.joined()
     }
 }
