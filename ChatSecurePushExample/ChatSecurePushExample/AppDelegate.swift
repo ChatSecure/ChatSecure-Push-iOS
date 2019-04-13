@@ -21,7 +21,7 @@ class AppDelegate: UIResponder, UIApplicationDelegate {
     var apnsToken: String?
 
 
-    func application(_ application: UIApplication, didFinishLaunchingWithOptions launchOptions: [UIApplicationLaunchOptionsKey: Any]?) -> Bool {
+    func application(_ application: UIApplication, didFinishLaunchingWithOptions launchOptions: [UIApplication.LaunchOptionsKey: Any]?) -> Bool {
         
         let settings = UIUserNotificationSettings(types: ([UIUserNotificationType.badge, UIUserNotificationType.sound, UIUserNotificationType.alert]), categories: nil)
         application.registerUserNotificationSettings(settings)

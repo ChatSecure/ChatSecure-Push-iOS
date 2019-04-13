@@ -17,7 +17,7 @@ import Foundation
 public extension Data {
     
     //https://stackoverflow.com/questions/39075043/how-to-convert-data-to-hex-string-in-swift/40089462#40089462
-    public func hexString() -> String {
+    func hexString() -> String {
         return map { String(format: "%02hhx", $0) }.joined()
     }
 }
@@ -29,7 +29,7 @@ public extension Data {
     @objc open var registrationID: String
     @objc open var active = true
     @objc open var deviceKind = DeviceKind.unknown
-    @objc open let dateCreated: Date
+    @objc public let dateCreated: Date
     
     
     

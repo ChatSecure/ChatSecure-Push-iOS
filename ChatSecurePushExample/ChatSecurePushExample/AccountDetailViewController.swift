@@ -54,7 +54,7 @@ class AccountDetailViewController: UIViewController {
         if let token = self.messageTokenTextField?.text {
             let message = Message(token: token, url:nil, data: nil)
             self.client.sendMessage(message, completion: { (msg, error) -> Void in
-                print("Message: \(msg)")
+                print("Message: \(String(describing: msg))")
             })
         }
         
@@ -65,7 +65,7 @@ class AccountDetailViewController: UIViewController {
             if let id = self.device?.id {
                 self.client.createToken(id, name: "I'm just a test token", completion: { (token, error) -> Void in
                     if let tempToken = token {
-                        print("Token: \(token)")
+                        print("Token: \(String(describing: token))")
                         DispatchQueue.main.async(execute: { () -> Void in
                             let activityVewController = UIActivityViewController(activityItems: [tempToken.tokenString], applicationActivities: nil)
                             self.present(activityVewController, animated: true, completion: nil)
