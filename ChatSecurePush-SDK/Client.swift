@@ -58,9 +58,9 @@ public enum jsonKeys: String {
 */
 @objc open class Client: NSObject {
     /// The API URL in the format in the format `https://example.com/api/v1/`
-    @objc open let baseUrl: URL
+    @objc public let baseUrl: URL
     /// The url session to be used for calls to the server
-    @objc open let urlSession: URLSession
+    @objc public let urlSession: URLSession
     /// This is the queue where callbacks from the `Client` are executed on
     @objc open var callbackQueue = OperationQueue()
     /// The account containing the data need for server authentication. This needs to be set after `registerNewUser` with the returned account.

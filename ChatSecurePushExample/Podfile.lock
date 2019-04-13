@@ -1,29 +1,34 @@
 PODS:
   - ChatSecure-Push-iOS (1.0)
   - SOCKit (1.1)
-  - URLMock (1.3.2):
-    - URLMock/Core (= 1.3.2)
-    - URLMock/SubclassResponsibility (= 1.3.2)
-    - URLMock/TestHelpers (= 1.3.2)
-  - URLMock/Core (1.3.2):
+  - URLMock (1.3.4):
+    - URLMock/Core (= 1.3.4)
+    - URLMock/SubclassResponsibility (= 1.3.4)
+    - URLMock/TestHelpers (= 1.3.4)
+  - URLMock/Core (1.3.4):
     - SOCKit (~> 1.1)
-  - URLMock/SubclassResponsibility (1.3.2):
+  - URLMock/SubclassResponsibility (1.3.4):
     - URLMock/TestHelpers
-  - URLMock/TestHelpers (1.3.2)
+  - URLMock/TestHelpers (1.3.4)
 
 DEPENDENCIES:
   - ChatSecure-Push-iOS (from `../ChatSecure-Push-iOS.podspec`)
   - URLMock (~> 1.3)
 
+SPEC REPOS:
+  https://github.com/cocoapods/specs.git:
+    - SOCKit
+    - URLMock
+
 EXTERNAL SOURCES:
   ChatSecure-Push-iOS:
-    :path: ../ChatSecure-Push-iOS.podspec
+    :path: "../ChatSecure-Push-iOS.podspec"
 
 SPEC CHECKSUMS:
   ChatSecure-Push-iOS: 8e336b0f94f80fae22e734e592c14de6ecf8d091
   SOCKit: c7376ac262bea9115b8f749358f762522a47d392
-  URLMock: b30768166d971bfc696e890951663f69201c3cf7
+  URLMock: 714b802836ab505356118991c167327eed4c7e59
 
-PODFILE CHECKSUM: ee06760149eaff694575a1d0a085929bf9ec1bbc
+PODFILE CHECKSUM: 9b6bb64e4b69301c018057fde084df58d9f932e6
 
-COCOAPODS: 1.2.0
+COCOAPODS: 1.6.1

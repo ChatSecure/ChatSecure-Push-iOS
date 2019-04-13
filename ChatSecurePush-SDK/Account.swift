@@ -10,7 +10,7 @@ import Foundation
 
 
 @objc open class Account: NSObject, NSCoding, NSCopying {
-    @objc open let username: String
+    @objc public let username: String
     @objc open var token: String?
     @objc open var email: String?
     

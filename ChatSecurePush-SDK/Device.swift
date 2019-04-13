@@ -29,7 +29,7 @@ public extension Data {
     @objc open var registrationID: String
     @objc open var active = true
     @objc open var deviceKind = DeviceKind.unknown
-    @objc open let dateCreated: Date
+    @objc public let dateCreated: Date
     
     
     

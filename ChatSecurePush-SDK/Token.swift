@@ -17,7 +17,7 @@ private enum TokenCodingSrings:String {
 }
 
 @objc open class Token: NSObject, NSCoding, NSCopying {
-    @objc open let tokenString: String
+    @objc public let tokenString: String
     @objc open var expires:Date?
     @objc open var registrationID: String?
     @objc open var name: String?

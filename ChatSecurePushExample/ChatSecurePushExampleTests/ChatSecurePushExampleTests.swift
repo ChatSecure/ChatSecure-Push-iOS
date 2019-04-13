@@ -42,7 +42,7 @@ class ChatSecurePushExampleTests: XCTestCase {
     
     func testCreatingClient() {
         let client = self.defaultClient(nil)
-        let hasLength = (client.baseUrl.absoluteString).characters.count > 0
+        let hasLength = (client.baseUrl.absoluteString).count > 0
         XCTAssertTrue(hasLength, "No base url")
     }
     
@@ -57,17 +57,17 @@ class ChatSecurePushExampleTests: XCTestCase {
             let correctEmail = account?.email == email
             let correctToken = account?.token == authToken
             
-            XCTAssertNil(error, "Error creating account \(error)")
-            XCTAssertTrue(correctUsername, "Incorrect username \(account?.username)")
-            XCTAssertTrue(correctEmail, "Incorrect email \(account?.email)")
-            XCTAssertTrue(correctToken, "Incorrect token \(account?.token)")
+            XCTAssertNil(error, "Error creating account \(String(describing: error))")
+            XCTAssertTrue(correctUsername, "Incorrect username \(String(describing: account?.username))")
+            XCTAssertTrue(correctEmail, "Incorrect email \(String(describing: account?.email))")
+            XCTAssertTrue(correctToken, "Incorrect token \(String(describing: account?.token))")
             
             expectation.fulfill()
         }
         
         self.waitForExpectations(timeout: 10, handler: { (error) -> Void in
             if( error != nil) {
-                print("\(error)")
+                print("\(String(describing: error))")
             }
         })
     }
@@ -81,16 +81,16 @@ class ChatSecurePushExampleTests: XCTestCase {
             let correctDeviceName = device?.name == deviceName
             let correctAPNSToken = device?.registrationID == apnsToken
             
-            XCTAssertNil(error, "Error creating device \(error)")
-            XCTAssertTrue(correctDeviceName, "Incorrect device name \(device?.name)")
-            XCTAssertTrue(correctAPNSToken, "Incorrect apns token \(device?.registrationID)")
+            XCTAssertNil(error, "Error creating device \(String(describing: error))")
+            XCTAssertTrue(correctDeviceName, "Incorrect device name \(String(describing: device?.name))")
+            XCTAssertTrue(correctAPNSToken, "Incorrect apns token \(String(describing: device?.registrationID))")
             
             expectation.fulfill()
         }
         
         self.waitForExpectations(timeout: 10, handler: { (error) -> Void in
             if( error != nil) {
-                print("\(error)")
+                print("\(String(describing: error))")
             }
         })
     }
@@ -106,18 +106,18 @@ class ChatSecurePushExampleTests: XCTestCase {
             let correctToken = token?.tokenString == whitelistToken
             let correctTokenExpiresDate = token?.expires == Deserializer.dateFormatter().date(from: dateExpires)
             
-            XCTAssertNil(error, "Erro creating token: \(error)")
-            XCTAssertTrue(correctDeviceName, "Incorrect device name \(token?.name)")
-            XCTAssertTrue(correctApnsToken, "Incorrect APNS token \(token?.registrationID)")
-            XCTAssertTrue(correctToken, "Incorrect token \(token?.tokenString)")
-            XCTAssertTrue(correctTokenExpiresDate, "Incorect expiration date \(token?.expires)")
+            XCTAssertNil(error, "Erro creating token: \(String(describing: error))")
+            XCTAssertTrue(correctDeviceName, "Incorrect device name \(String(describing: token?.name))")
+            XCTAssertTrue(correctApnsToken, "Incorrect APNS token \(String(describing: token?.registrationID))")
+            XCTAssertTrue(correctToken, "Incorrect token \(String(describing: token?.tokenString))")
+            XCTAssertTrue(correctTokenExpiresDate, "Incorect expiration date \(String(describing: token?.expires))")
             
             expectation.fulfill()
         }
         
         self.waitForExpectations(timeout: 10, handler: { (error) -> Void in
             if( error != nil) {
-                print("\(error)")
+                print("\(String(describing: error))")
             }
         })
     }
@@ -128,13 +128,13 @@ class ChatSecurePushExampleTests: XCTestCase {
         let expectation = self.expectation(description: "Getting multiple tokens")
         client.tokens(nil, completion: { (tokens, error) -> Void in
             XCTAssertGreaterThan(tokens!.count, 0, "No tokens found")
-            XCTAssertNil(error, "Error \(error)")
+            XCTAssertNil(error, "Error \(String(describing: error))")
             expectation.fulfill()
         })
         
         self.waitForExpectations(timeout: 20, handler: { (error) -> Void in
             if error != nil {
-                print("\(error)")
+                print("\(String(describing: error))")
             }
         })
     }
@@ -169,7 +169,7 @@ class ChatSecurePushExampleTests: XCTestCase {
             
             let equalToken = originalMessage.token == newMessage?.token
             
-            XCTAssertNil(error, "Error sending message \(error)")
+            XCTAssertNil(error, "Error sending message \(String(describing: error))")
             XCTAssertTrue(equalToken, "Token not equal")
             
             expectation.fulfill()
@@ -177,7 +177,7 @@ class ChatSecurePushExampleTests: XCTestCase {
         
         self.waitForExpectations(timeout: 30, handler: { (error) -> Void in
             if error != nil {
-                print("Error: \(error)")
+                print("Error: \(String(describing: error))")
             }
         })
     }
@@ -192,7 +192,7 @@ class ChatSecurePushExampleTests: XCTestCase {
         
         client.sendMessage(message) { (message, error) -> Void in
             XCTAssertNil(message)
-            guard let err = error as? NSError else {
+            guard let err = error as NSError? else {
                 XCTFail()
                 expectation.fulfill()
                 return
@@ -203,7 +203,7 @@ class ChatSecurePushExampleTests: XCTestCase {
         
         self.waitForExpectations(timeout: 30) { (err) -> Void in
             if (err != nil) {
-                print("\(err)")
+                print("\(String(describing: err))")
             }
         }
     }
@@ -226,7 +226,7 @@ class ChatSecurePushExampleTests: XCTestCase {
         
         self.waitForExpectations(timeout: 30) { (error) -> Void in
             if error != nil {
-                print("Error: \(error)")
+                print("Error: \(String(describing: error))")
             }
         }
     }
