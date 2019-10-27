@@ -22,7 +22,7 @@ public extension Data {
     }
 }
 
-@objc open class Device: NSObject, NSCoding, NSCopying {
+@objc open class Device: NSObject, NSSecureCoding, NSCopying {
     @objc open var name: String?
     @objc open var id: String?
     @objc open var deviceID: String?
@@ -30,8 +30,6 @@ public extension Data {
     @objc open var active = true
     @objc open var deviceKind = DeviceKind.unknown
     @objc public let dateCreated: Date
-    
-    
     
     @objc public init (registrationID: String,dateCreated: Date, name: String?, deviceID: String?, id: String?) {
         self.name = name
@@ -51,7 +49,7 @@ public extension Data {
             self.registrationID = ""
         }
         self.active = aDecoder.decodeBool(forKey: "active")
-        if let date = aDecoder.decodeObject(forKey: "dateCreated") as? Date {
+        if let date = aDecoder.decodeObject(of: [NSDate.self], forKey: "dateCreated") as? Date {
             self.dateCreated = date
         } else {
             self.dateCreated = Date()
@@ -82,5 +80,9 @@ public extension Data {
         newDevice.active = self.active
         newDevice.deviceKind = self.deviceKind
         return newDevice
+    }
+    
+    public static var supportsSecureCoding: Bool {
+        return true
     }
 }
