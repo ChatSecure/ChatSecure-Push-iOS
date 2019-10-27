@@ -35,4 +35,5 @@ Pod::Spec.new do |s|
   s.source       = { :git => "https://github.com/ChatSecure/ChatSecure-Push-iOS.git", :tag => s.version.to_s }
 
   s.source_files  = "Classes", "ChatSecurePush-SDK/*.swift"
+  s.swift_versions = ['5.0']
 end
